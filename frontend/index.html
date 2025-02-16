@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: url('https://source.unsplash.com/1600x900/?university,students') no-repeat center center/cover;
+            background: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600') no-repeat center center/cover;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -44,13 +44,39 @@
         .footer a:hover {
             text-decoration: underline;
         }
+        .navbar .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .navbar .slogan {
+            font-size: 1rem;
+            font-weight: lighter;
+        }
+        .navbar .nav-icons {
+            display: flex;
+            align-items: center;
+        }
+        .navbar .nav-icons a {
+            margin-left: 10px;
+            color: white;
+        }
+        .navbar .nav-icons img {
+            width: 24px;
+            height: 24px;
+        }
     </style>
 </head>
 <body>
     
-    <nav class="navbar navbar-dark bg-dark w-100 position-absolute top-0">
-        <div class="container-fluid text-center">
-            <span class="navbar-brand mx-auto">Study Abroad Platform - Helping students find the right academic path</span>
+    <nav class="navbar navbar-dark bg-dark w-100 position-absolute top-0 px-3 d-flex justify-content-between">
+        <div class="navbar-brand">Study Abroad Platform</div>
+        <span class="slogan">Helping students find the right academic path</span>
+        <div class="nav-icons">
+            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733547.png" alt="Facebook"></a>
+            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733579.png" alt="Twitter"></a>
+            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733558.png" alt="Instagram"></a>
+            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733609.png" alt="LinkedIn"></a>
+            <a href="#" class="btn btn-outline-light btn-sm ms-2">Login</a>
         </div>
     </nav>
     
@@ -68,12 +94,6 @@
             <a href="#">Join as an Advisor</a> |
             <a href="#">Terms & Conditions</a> |
             <a href="#">Privacy Policy</a>
-        </div>
-        <div>
-            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733547.png" alt="Facebook"></a>
-            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733579.png" alt="Twitter"></a>
-            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733558.png" alt="Instagram"></a>
-            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733609.png" alt="LinkedIn"></a>
         </div>
         <p class="text-white">&copy; 2025 Study Abroad Platform. All Rights Reserved.</p>
     </footer>
