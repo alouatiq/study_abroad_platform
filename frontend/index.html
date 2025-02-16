@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Abroad Platform</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .hero-section {
+            background: url('https://source.unsplash.com/1600x900/?university,students') no-repeat center center/cover;
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        .overlay {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 50px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Study Abroad Platform</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#programs">Find Programs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#register">Join as an Advisor</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <header class="hero-section">
+        <div class="overlay">
+            <h1>Helping students find the right academic path</h1>
+            <p>Explore top universities and connect with experienced study advisors.</p>
+            <a href="#programs" class="btn btn-primary">Find Programs</a>
+        </div>
+    </header>
+    
+    <section id="programs" class="container text-center my-5">
+        <h2>Explore Programs</h2>
+        <p>Search for universities and study programs that fit your goals.</p>
+        <form class="row g-3 justify-content-center">
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Enter your desired field of study">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success">Search</button>
+            </div>
+        </form>
+    </section>
+    
+    <section id="register" class="bg-light text-center py-5">
+        <h2>Join as an Advisor or Agency</h2>
+        <p>Help students navigate their journey abroad by becoming a registered study advisor or agency.</p>
+        <a href="#" class="btn btn-dark">Get Started</a>
+    </section>
+    
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2025 Study Abroad Platform. All Rights Reserved.</p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
