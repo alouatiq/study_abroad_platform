@@ -4,267 +4,225 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Abroad Platform</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600') no-repeat center center/cover;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            text-align: center;
-            color: white;
-            margin: 0;
-        }
-        .overlay {
-            background: rgba(0, 0, 0, 0.6);
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .hero-section {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-        }
-        .footer {
-            background: rgba(0, 0, 0, 0.8);
-            width: 100%;
-            padding: 2px 0;
-            position: fixed;
-            bottom: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-        .footer a {
-            color: white;
-            margin: 0 10px;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            padding: 10px;
-            background-color: rgba(0, 0, 0, 0.9);
-            position: absolute;
-            top: 0;
-        }
-        .modal-content {
-            color: black;
-        }
-        .chat-button {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease;
-        }
-        .chat-button:hover {
-            background-color: #0056b3;
-        }
-        .chat-popup {
-            display: none;
-            position: fixed;
-            bottom: 100px;
-            right: 20px;
-            width: 300px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-            padding: 10px;
-            color: black;
-            font-size: 14px;
-        }
-        .chat-header {
-            background: #007bff;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            border-radius: 10px 10px 0 0;
-        }
-        .chat-body {
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        .chat-message {
-            background: #e9ecef;
-            padding: 8px;
-            border-radius: 5px;
-            margin-bottom: 5px;
-            text-align: left;
-        }
-        .chat-typing {
-            font-style: italic;
-            color: gray;
-        }
-        .chat-input {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    border-top: 1px solid #ccc;
-}
-.chat-input input {
-    flex-grow: 1;
-    border: none;
-    padding: 8px;
-    border-radius: 5px;
-    margin-right: 5px;
-}
-.chat-input button {
-    border: none;
-    background: #007bff;
-    color: white;
-    padding: 8px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.chat-input button:hover {
-    background: #0056b3;
-}
-
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                text-align: center;
-                align-items: center;
-                padding: 15px 0;
-            }
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
-    
-    <nav class="navbar navbar-dark">
-        <div class="navbar-brand">Study Abroad Platform</div>
-        <span class="slogan">Helping students find the right academic path</span>
-        <div class="nav-icons">
-            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733547.png" alt="Facebook"></a>
-            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733579.png" alt="Twitter"></a>
-            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733558.png" alt="Instagram"></a>
-            <a href="#"><img src="https://cdn-icons-png.flaticon.com/24/733/733609.png" alt="LinkedIn"></a>
-            <a href="#" class="btn btn-outline-light btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Study Abroad Platform</a>
+            <div class="ml-auto">
+                <a href="#" class="btn btn-outline-light">Login</a>
+            </div>
         </div>
     </nav>
-    
-    <div class="hero-section">
-        <div class="overlay">
+
+    <main class="container mt-5">
+        <div class="hero-section text-center mb-5">
             <h1>Find Your Ideal Study Program</h1>
-            <a href="#" class="btn btn-primary">Find Program</a>
+            <p class="lead">Connect with top universities worldwide and start your international education journey</p>
+            <button class="btn btn-primary btn-lg mt-4" id="findProgramBtn" data-bs-toggle="modal" data-bs-target="#questionnaireModal">Find Program</button>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <!-- Search Filters -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Filter Programs</h5>
+                        <form id="searchForm">
+                            <div class="mb-3">
+                                <label for="budgetRange" class="form-label">Budget Range (€)</label>
+                                <div class="d-flex gap-2">
+                                    <input type="number" class="form-control" id="budgetMin" placeholder="Min">
+                                    <input type="number" class="form-control" id="budgetMax" placeholder="Max">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="destination" class="form-label">Destination</label>
+                                <select class="form-select" id="destination">
+                                    <option value="">All Countries</option>
+                                    <option value="Germany">Germany</option>
+                                    <option value="France">France</option>
+                                    <option value="Spain">Spain</option>
+                                    <option value="Italy">Italy</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="fieldOfStudy" class="form-label">Field of Study</label>
+                                <select class="form-select" id="fieldOfStudy">
+                                    <option value="">All Fields</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Business">Business</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Medicine">Medicine</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <!-- Program Listings -->
+                <div id="programList" class="row g-4">
+                    <!-- Programs will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Questionnaire Modal -->
+    <div class="modal fade" id="questionnaireModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Find Your Perfect Program</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="questionnaireForm">
+                        <div class="mb-4">
+                            <h6>What's your budget range?</h6>
+                            <div class="d-flex gap-2">
+                                <input type="number" class="form-control" name="budgetMin" placeholder="Minimum (€)">
+                                <input type="number" class="form-control" name="budgetMax" placeholder="Maximum (€)">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <h6>Where would you like to study?</h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="destinations" value="Europe">
+                                        <label class="form-check-label">Europe</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="destinations" value="North America">
+                                        <label class="form-check-label">North America</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="destinations" value="Asia">
+                                        <label class="form-check-label">Asia</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <h6>What languages do you speak?</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <select class="form-select" name="language">
+                                        <option value="">Select Language</option>
+                                        <option value="English">English</option>
+                                        <option value="German">German</option>
+                                        <option value="French">French</option>
+                                        <option value="Spanish">Spanish</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-select" name="proficiency">
+                                        <option value="">Proficiency Level</option>
+                                        <option value="Beginner">Beginner (A1-A2)</option>
+                                        <option value="Intermediate">Intermediate (B1-B2)</option>
+                                        <option value="Advanced">Advanced (C1-C2)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <h6>What field would you like to study?</h6>
+                            <select class="form-select" name="fieldOfStudy">
+                                <option value="">Select Field</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Business">Business Administration</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Medicine">Medicine</option>
+                                <option value="Arts">Arts &amp; Design</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="findMatchingPrograms">Find Matching Programs</button>
+                </div>
+            </div>
         </div>
     </div>
 
-<!-- Login Modal -->
-<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Login</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <select class="form-select mb-3">
-                    <option>Login as Student</option>
-                    <option>Login as Student Advisor</option>
-                    <option>Login as Agency Manager</option>
-                </select>
-                <input type="email" class="form-control mb-2" placeholder="Email">
-                <input type="password" class="form-control mb-2" placeholder="Password">
-                <button class="btn btn-primary w-100">Login</button>
+    <!-- Program Details Modal -->
+    <div class="modal fade" id="programDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Program Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="programDetailsContent">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="applyNow">Apply Now</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Join Us Modal -->
-<div class="modal fade" id="joinModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Join Us</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <select class="form-select mb-3">
-                    <option>Join as Student Advisor</option>
-                    <option>Join as an Agency</option>
-                </select>
-                <input type="email" class="form-control mb-2" placeholder="Email">
-                <input type="password" class="form-control mb-2" placeholder="Password">
-                <button class="btn btn-primary w-100">Sign Up</button>
+    <!-- Application Modal -->
+    <div class="modal fade" id="applicationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Apply for Program</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="applicationForm">
+                        <div class="mb-3">
+                            <label for="studentEmail" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="studentEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="studentName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="studentName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phoneNumber">
+                        </div>
+                        <div class="mb-3">
+                            <label for="startDate" class="form-label">Preferred Start Date</label>
+                            <input type="date" class="form-control" id="startDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comments" class="form-label">Additional Comments</label>
+                            <textarea class="form-control" id="comments" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submitApplication">Submit Application</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-    
-    <footer class="footer text-center">
-        <div>
-            <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a> |
-            <a href="#" data-bs-toggle="modal" data-bs-target="#joinModal">Join Us</a> |
-            <a href="#">Legal Information</a> |
-            <a href="#">FAQ</a> |
-            <a href="#">About</a> |
-            <a href="#">Contact</a>
+
+    <footer class="footer">
+        <div class="container text-center">
+            <span class="text-muted">© 2025 Study Abroad Platform. All Rights Reserved.</span>
         </div>
-        <p class="text-white mt-2">&copy; 2025 Study Abroad Platform. All Rights Reserved.</p>
     </footer>
-    
-        <button class="chat-button" onclick="toggleChat()">💬 Chat</button>
-    <div class="chat-popup" id="chatPopup">
-        <div class="chat-header">Study AI - Your AI Advisor</div>
-        <div class="chat-body">
-            <div class="chat-message">👋 Hello! How can I assist you today?</div>
-            <div class="chat-message chat-typing">AI Advisor is typing...</div>
-        </div>
-        <div class="chat-input">
-            <input type="text" id="chatMessage" class="form-control" placeholder="Type a message...">
-            <button class="btn btn-primary" onclick="sendMessage()">📩</button>
-        </div>
-    </div>
-    
-    <script>
-        function toggleChat() {
-            var chatPopup = document.getElementById("chatPopup");
-            chatPopup.style.display = chatPopup.style.display === "block" ? "none" : "block";
-        }
-        function sendMessage() {
-    let inputField = document.getElementById("chatMessage");
-    let messageText = inputField.value.trim();
 
-    if (messageText !== "") {
-        let chatBody = document.querySelector(".chat-body");
-        let newMessage = document.createElement("div");
-        newMessage.classList.add("chat-message");
-        newMessage.textContent = messageText;
-
-        chatBody.appendChild(newMessage);
-        inputField.value = ""; // Clear input after sending
-
-        // Scroll to bottom
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }
-}
-
-    </script>
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
