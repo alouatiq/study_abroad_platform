@@ -1,76 +1,87 @@
 # Study Abroad Platform
 
 ## Overview
-The **Study Abroad Platform** is a web application designed to help students find the right academic programs with expert guidance. The platform facilitates connections between students, student advisors, and agencies to streamline the study abroad process.
+
+The Study Abroad Platform is a web application designed to simplify the process of studying abroad for students. It allows students to explore programs, connect with study abroad agencies and student advisors, and track their application progress. Agencies can manage programs, assign advisors, and offer additional services, ensuring a seamless experience for students.
 
 ## Features
-- **Student Registration**: Allows students to sign up and explore programs.
-- **Program Discovery**: Search and filter study programs based on preferences.
-- **Student Advisor & Agency Management**: Agencies can register and manage advisors and students.
-- **Login & Authentication**: Users can log in as students, student advisors, or agency managers.
-- **Live Chat Support**: Provides real-time assistance to users.
-- **Mobile-Responsive UI**: Fully optimized for desktop and mobile use.
+
+- Student Registration and Login
+- Program Discovery with Filtering
+- Agency Registration and Management
+- Student-Advisor Assignment
+- Search and Filter for Programs
+- Dashboard for Students, Agencies, and Advisors
 
 ## Tech Stack
-### Frontend
-- **HTML, CSS, Bootstrap** – For responsive and clean UI design.
-- **JavaScript** – Enhances interactivity.
 
-### Backend
-- **Flask (Python)** – Handles server-side logic.
-- **MySQL** – Stores and manages data.
-- **Render** – Backend hosting.
+- Frontend: HTML, CSS, JavaScript, Bootstrap
+- Backend: Flask (Python), SQLAlchemy
+- Database: MySQL
 
-### Deployment
-- **Frontend hosted on Vercel**
-- **Backend hosted on Render/VPS**
-- **Cloudflare** for security and free SSL
+## Installation
 
-## Installation & Setup
-### Prerequisites
-- Python 3
-- MySQL
-- Flask
-- Bootstrap
-
-### Steps
 1. Clone the repository:
-   ```sh
-   git clone https://github.com/alouatiq/study_abroad_platform.git
+
+   ```bash
+   git clone https://github.com/yourusername/study-abroad-platform.git
+   cd study-abroad-platform
    ```
-2. Navigate to the project directory:
-   ```sh
-   cd study_abroad_platform
+
+2. Create a virtual environment and activate it:
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    ```
-3. Install dependencies:
-   ```sh
+
+3. Install the required packages:
+
+   ```bash
    pip install -r requirements.txt
    ```
-4. Set up the database and environment variables.
-5. Run the Flask server:
-   ```sh
-   python app.py
+
+4. login to MySQL database as root:
+
+mysql -u root -p
+
+5. # Create the database and its user with previleges Inside the MySQL shell
+
+CREATE DATABASE IF NOT EXISTS study_abroad_platform;
+
+CREATE USER IF NOT EXISTS 'portfolio_dev' @'localhost' IDENTIFIED BY 'portfolio_dev_pwd';
+
+GRANT ALL PRIVILEGES ON `study_abroad_platform`.\* TO 'portfolio_dev' @'localhost';
+
+GRANT
+SELECT
+ON `performance_schema`.\* TO 'portfolio_dev' @'localhost';
+
+FLUSH PRIVILEGES;
+EXIT
+
+6. # Set up the database migration:
+
+   ```bash
+   flask db init
+   flask db migrate -m "Initial migration."
+   flask db upgrade
    ```
-6. Open your browser and visit:
+
+7. # Run the application:
+   ```bash
+   flask run
    ```
-   http://127.0.0.1:5000
-   ```
+
+## Usage
+
+- Visit `http://127.0.0.1:5000/` in your web browser to access the Study Abroad Platform.
+- Register as a student, agency, or advisor to explore the features.
 
 ## Contributing
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Commit your changes (`git commit -m 'Add new feature'`).
-4. Push the branch (`git push origin feature-branch`).
-5. Open a pull request.
+
+Contributions are welcome! Please open an issue or submit a pull request.
 
 ## License
+
 This project is licensed under the MIT License.
-
-## Collaborators
-- **Hassan AL OUATIQ**
-- **Hajar El Mannani**
-- **Anas AATEF**
-
-## Contact
-For inquiries and support, please reach out.
-
