@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block content %}
+<h2>Agency Advisors</h2>
+<ul>
+  {% for advisor in advisors %}
+  <li>
+    {{ advisor.full_name }}
+    <form
+      action="{{ url_for('assign_advisor', agency_id=agency_id, advisor_id=advisor.id) }}"
+      method="POST"
+      style="display: inline"
+    >
+      <select name="student_id" class="form-control" required>
+        <option value="">Select a Student</option>
+        {% for student in available_students %}
+        <option value="{{ student.id }}">{{ student.full_name }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-primary btn-sm">Assign</button>
+    </form>
+    <ul>
+      {% for assignment in advisor_assignments %} {% if assignment.advisor_id ==
+      advisor.id %}
+      <li>
+        {{ assignment.student.full_name }}
+        <form
+          action="{{ url_for('unassign_student', agency_id=agency_id, advisor_id=advisor.id, student_id=assignment.student_id) }}"
+          method="POST"
+          style="display: inline"
+        >
+          <button type="submit" class="btn btn-danger btn-sm">Unassign</button>
+        </form>
+      </li>
+      {% endif %} {% endfor %}
+    </ul>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

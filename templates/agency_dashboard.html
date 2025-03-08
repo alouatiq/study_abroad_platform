@@ -1,0 +1,247 @@
+{% extends "base.html" %} {% block content %}
+<h2>Agency Dashboard</h2>
+<p>Welcome, {{ agency.name }}!</p>
+<h3>Your Programs</h3>
+<ul>
+  {% for program in programs %}
+  <li>{{ program.name }} - {{ program.university }}</li>
+  {% endfor %}
+</ul>
+<a
+  href="{{ url_for('create_program', agency_id=agency.id) }}"
+  class="btn btn-primary"
+  >Create New Program</a
+>
+<a
+  href="{{ url_for('agency_advisors', agency_id=agency.id) }}"
+  class="btn btn-primary"
+  >Manage Advisors</a
+>
+<a
+  href="{{ url_for('agency_students', agency_id=agency.id) }}"
+  class="btn btn-primary"
+  >Manage Students</a
+>
+
+<!-- Tabs for Programs and Advisors -->
+<ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a
+      class="nav-link active"
+      id="programs-tab"
+      data-bs-toggle="tab"
+      href="#programs"
+      role="tab"
+      aria-controls="programs"
+      aria-selected="true"
+      >Programs</a
+    >
+  </li>
+  <li class="nav-item" role="presentation">
+    <a
+      class="nav-link"
+      id="advisors-tab"
+      data-bs-toggle="tab"
+      href="#advisors"
+      role="tab"
+      aria-controls="advisors"
+      aria-selected="false"
+      >Advisors</a
+    >
+  </li>
+</ul>
+
+<div class="tab-content" id="dashboardTabsContent">
+  <!-- Programs Tab -->
+  <div
+    class="tab-pane fade show active"
+    id="programs"
+    role="tabpanel"
+    aria-labelledby="programs-tab"
+  >
+    <div class="mt-3">
+      <h3>Programs</h3>
+      <a
+        href="{{ url_for('create_program', agency_id=session.get('agency')) }}"
+        class="btn btn-primary mb-3"
+        >Add New Program</a
+      >
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Program Name</th>
+            <th>University</th>
+            <th>Field</th>
+            <th>Country</th>
+            <th>Fee</th>
+            <th>Deadline</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for program in programs %}
+          <tr>
+            <td>{{ program.name }}</td>
+            <td>{{ program.university }}</td>
+            <td>{{ program.field }}</td>
+            <td>{{ program.country }}</td>
+            <td>{{ program.fee }}</td>
+            <td>
+              {{ program.deadline.strftime('%Y-%m-%d') if program.deadline else
+              'N/A' }}
+            </td>
+            <td>{{ program.created_at.strftime('%Y-%m-%d') }}</td>
+            <td>
+              <button class="btn btn-sm btn-primary">Edit</button>
+              <button class="btn btn-sm btn-danger">Delete</button>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="8">No programs found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Advisors Tab -->
+  <div
+    class="tab-pane fade"
+    id="advisors"
+    role="tabpanel"
+    aria-labelledby="advisors-tab"
+  >
+    <div class="mt-3">
+      <h3>Advisors</h3>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Advisor Name</th>
+            <th>Email</th>
+            <th>Country</th>
+            <th>Program</th>
+            <th>Programs &amp; Assigned Students</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for advisor in advisors %}
+          <tr>
+            <td>{{ advisor.full_name }}</td>
+            <td>{{ advisor.email }}</td>
+            <td>{{ advisor.country_of_residence or "N/A" }}</td>
+            <td>
+              {% for program in programs %} {% if program.id ==
+              advisor.program_id %} {{ program.name }} ({{ program.university
+              }}) {% endif %} {% endfor %}
+            </td>
+            <td>
+              <strong>Program(s):</strong><br />
+              {% for program in programs %} {% if program.id ==
+              advisor.program_id %} {{ program.name }} ({{ program.university
+              }})<br />
+              {% endif %} {% endfor %}
+
+              <strong>Assigned Students:</strong><br />
+              {% set assigned_students = advisor_assignments |
+              selectattr("advisor_id", "equalto", advisor.id) | list %} {% if
+              assigned_students %} {% for assignment in assigned_students %} {%
+              for student in available_students %} {% if student.id ==
+              assignment.student_id %} {{ student.full_name }}<br />
+              {% endif %} {% endfor %} {% endfor %} {% else %} None {% endif %}
+            </td>
+
+            <td>
+              <!-- Button to trigger the assign modal -->
+              <button
+                class="btn btn-sm btn-info"
+                data-bs-toggle="modal"
+                data-bs-target="#assignModal{{ advisor.id }}"
+              >
+                Assign Advisor
+              </button>
+              <button class="btn btn-sm btn-danger">Delete</button>
+            </td>
+          </tr>
+
+          <!-- Modal for assigning advisor to a student -->
+          <div
+            class="modal fade"
+            id="assignModal{{ advisor.id }}"
+            tabindex="-1"
+            aria-labelledby="assignModalLabel{{ advisor.id }}"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form
+                  method="POST"
+                  action="{{ url_for('assign_advisor', agency_id=session.get('agency'), advisor_id=advisor.id) }}"
+                >
+                  <div class="modal-header">
+                    <h5
+                      class="modal-title"
+                      id="assignModalLabel{{ advisor.id }}"
+                    >
+                      Assign Advisor to Student
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label for="studentSelect{{ advisor.id }}"
+                        >Select Student</label
+                      >
+
+                      <select
+                        name="student_id"
+                        id="studentSelect{{ advisor.id }}"
+                        class="form-control"
+                        required
+                      >
+                        <option value="">Select a Student</option>
+                        {% for student in available_students %} {% if student.id
+                        not in assigned_student_ids %}
+                        <option value="{{ student.id }}">
+                          {{ student.full_name }} ({{ student.email }})
+                        </option>
+                        {% endif %} {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                      Assign
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <tr>
+            <td colspan="4">No advisors found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

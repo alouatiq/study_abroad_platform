@@ -1,0 +1,59 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="jumbotron text-center">
+  <h1 class="display-4">Study Abroad Platform</h1>
+  <p class="lead">
+    Helping students find the right academic path with expert guidance.
+  </p>
+</div>
+<h2>Welcome to Study Abroad</h2>
+<p>Find the best study abroad programs for you.</p>
+<a href="{{ url_for('programs') }}" class="btn btn-primary">Explore Programs</a>
+<div class="row mt-5">
+  <!-- Section for Students -->
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">For Students</h5>
+        <p class="card-text">
+          Explore international programs, apply easily, and track your
+          application progress.
+        </p>
+        <a href="{{ url_for('register_student') }}" class="btn btn-primary"
+          >Sign Up as Student</a
+        >
+      </div>
+    </div>
+  </div>
+  <!-- Section for Agencies -->
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">For Agencies</h5>
+        <p class="card-text">
+          Manage academic programs, review student applications, and assign
+          advisors seamlessly.
+        </p>
+        <a href="{{ url_for('register_agency') }}" class="btn btn-success"
+          >Sign Up as Agency</a
+        >
+      </div>
+    </div>
+  </div>
+  <!-- Section for Advisors -->
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">For Advisors</h5>
+        <p class="card-text">
+          Assist students with personalized guidance and support their journey
+          to study abroad.
+        </p>
+        <a href="{{ url_for('register_advisor') }}" class="btn btn-info"
+          >Sign Up as Advisor</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

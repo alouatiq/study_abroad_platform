@@ -1,0 +1,54 @@
+{% extends "base.html" %} {% block content %}
+<h2>Create Program</h2>
+<form method="POST">
+  <div class="mb-3">
+    <label>Program Name</label>
+    <input type="text" name="name" class="form-control" required />
+  </div>
+  <div class="mb-3">
+    <label>University</label>
+    <input type="text" name="university" class="form-control" required />
+  </div>
+  <div class="mb-3">
+    <label>Field</label>
+    <input type="text" name="field" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Country</label>
+    <input type="text" name="country" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Fee</label>
+    <input type="text" name="fee" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Duration</label>
+    <input type="text" name="duration" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Languages</label>
+    <input type="text" name="languages" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Proficiency Level</label>
+    <input type="text" name="proficiency_level" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Eligibility Criteria</label>
+    <input type="text" name="eligibility_criteria" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Available Scholarships</label>
+    <input type="text" name="available_scholarships" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Deadline</label>
+    <input type="date" name="deadline" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Description</label>
+    <textarea name="description" class="form-control"></textarea>
+  </div>
+  <button type="submit" class="btn btn-success">Create Program</button>
+</form>
+{% endblock %}

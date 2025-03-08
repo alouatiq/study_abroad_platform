@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% block content %}
+<h2>{{ program.name }}</h2>
+<p><strong>University:</strong> {{ program.university }}</p>
+<p><strong>Field:</strong> {{ program.field }}</p>
+<p><strong>Country:</strong> {{ program.country }}</p>
+<p><strong>Fee:</strong> {{ program.fee }}</p>
+<p><strong>Deadline:</strong> {{ program.deadline }}</p>
+<p><strong>Description:</strong> {{ program.description }}</p>
+<!-- Additional fields as needed -->
+{% if 'student' in session %}
+<form
+  action="{{ url_for('apply_to_program', student_id=session['student'], program_id=program.id) }}"
+  method="POST"
+>
+  <button type="submit" class="btn btn-primary">Apply</button>
+</form>
+{% endif %} {% endblock %}

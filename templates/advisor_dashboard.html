@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block content %}
+<h2>Advisor Dashboard</h2>
+<p>Welcome, {{ advisor.full_name }}!</p>
+<a
+  href="{{ url_for('advisor_students', advisor_id=advisor.id) }}"
+  class="btn btn-primary"
+  >View Students</a
+>
+<h2>Advisor Dashboard - Selected Programs</h2>
+<!-- Placeholder for a table of programs applied to by the advisor -->
+<table class="table">
+  <thead>
+    <tr>
+      <th>Program Name</th>
+      <th>University</th>
+      <th>Country</th>
+      <th>Field</th>
+      <th>Agency</th>
+      <th>Deadline</th>
+      <th>Application Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Sample Program</td>
+      <td>University X</td>
+      <td>Country</td>
+      <td>Field</td>
+      <td>Agency</td>
+      <td>2025-01-01</td>
+      <td>2024-12-01</td>
+      <td>
+        <button class="btn btn-sm btn-secondary">Offer Assistance</button>
+        <button class="btn btn-sm btn-danger">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}
