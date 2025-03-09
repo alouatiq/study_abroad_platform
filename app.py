@@ -1,4 +1,4 @@
-from models import Student, Agency, Program, Advisor, StudentProgram, AdvisorAssignment
+from models import Student, Agency, Program, Advisor, StudentProgram, AdvisorAssignment, AdvisorApplication
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_session import Session
 from config import Config
@@ -395,21 +395,15 @@ def assign_advisor(agency_id, advisor_id):
     if session.get('agency') != agency_id:
         flash("Please login as agency", "warning")
         return redirect(url_for('login_agency'))
-
     student_id = request.form.get('student_id')
-
     if not student_id:
         flash("No student selected", "danger")
         return redirect(url_for('agency_advisors', agency_id=agency_id))
-
-    # Check if the student is already assigned to any advisor
-    existing_assignment = AdvisorAssignment.query.filter_by(
-        student_id=student_id).first()
+    # Check if the student is already assigned
+    existing_assignment = AdvisorAssignment.query.filter_by(student_id=student_id).first()
     if existing_assignment:
         flash("This student is already assigned to an advisor.", "warning")
         return redirect(url_for('agency_advisors', agency_id=agency_id))
-
-    # Create a new advisor assignment record
     new_assignment = AdvisorAssignment(
         id=generate_uuid(),
         advisor_id=advisor_id,
@@ -417,9 +411,9 @@ def assign_advisor(agency_id, advisor_id):
     )
     db.session.add(new_assignment)
     db.session.commit()
-
-    flash("Advisor assigned to student successfully", "success")
+    flash("Student assigned successfully", "success")
     return redirect(url_for('agency_advisors', agency_id=agency_id))
+
 
 
 @app.route('/agencies/<agency_id>/profile', methods=['GET', 'POST'])
@@ -504,12 +498,14 @@ def create_program(agency_id):
 @app.route('/register/advisor', methods=['GET', 'POST'])
 def register_advisor():
     form = AdvisorRegistrationForm()
+    # Populate the agency choices from the database
+    agencies = Agency.query.all()
+    form.agency_id.choices = [(agency.id, agency.name) for agency in agencies]  # Ensure this is a list
     if form.validate_on_submit():
         full_name = form.full_name.data
         email = form.email.data
         password = generate_password_hash(form.password.data)
-        # agency_id = form.agency_id.data
-        # program_id = form.program_id.data
+        agency_id = form.agency_id.data  # Now the agency is selected
         country_of_residence = form.country_of_residence.data
         phone_number = form.phone_number.data
 
@@ -518,16 +514,14 @@ def register_advisor():
             full_name=full_name,
             email=email,
             password=password,
-            country_of_residence=country_of_residence, phone_number=phone_number
-        )  # agency_id=agency_id, program_id=program_id
+            agency_id=agency_id,
+            country_of_residence=country_of_residence,
+            phone_number=phone_number
+        )
         db.session.add(new_advisor)
         db.session.commit()
         flash("Advisor registration successful. Please login.", "success")
         return redirect(url_for('login_advisor'))
-    # GET: Retrieve lists of agencies and programs
-    # agencies = Agency.query.all()
-    # programs = Program.query.all()
-    # , agencies=agencies, programs=programs
     return render_template('register_advisor.html', form=form)
 
 
@@ -548,15 +542,16 @@ def login_advisor():
     return render_template('login_advisor.html', form=form)
 
 
-@app.route('/advisors/<advisor_id>/dashboard')
+@app.route('/advisors/<string:advisor_id>/dashboard')
 def advisor_dashboard(advisor_id):
     if session.get('advisor') != advisor_id:
         flash("Please login as advisor", "warning")
         return redirect(url_for('login_advisor'))
     advisor = Advisor.query.get_or_404(advisor_id)
-    programs = Program.query.filter_by(agency_id=advisor.agency_id).all()
-    return render_template('advisor_dashboard.html', advisor=advisor, programs=programs)
-
+    available_programs = Program.query.filter_by(agency_id=advisor.agency_id).all()
+    # Advisor's applications:
+    applications = AdvisorApplication.query.filter_by(advisor_id=advisor_id).all()
+    return render_template('advisor_dashboard.html', advisor=advisor, available_programs=available_programs, applications=applications)
 
 @app.route('/advisors/<advisor_id>/dashboard/students')
 def advisor_students(advisor_id):
@@ -579,18 +574,29 @@ def advisor_profile(advisor_id):
         return redirect(url_for('advisor_profile', advisor_id=advisor_id))
     return render_template('advisor_profile.html', advisor=advisor)
 
-@app.route('/advisors/<string:advisor_id>/choose_program', methods=['POST'])
-def choose_program(advisor_id):
-    # Get the selected program from the form submission
-    program_id = request.form.get('program_id')
-    advisor = Advisor.query.get_or_404(advisor_id)
+
+@app.route('/advisors/<string:advisor_id>/apply/<string:program_id>', methods=['POST'])
+def apply_for_program(advisor_id, program_id):
+    if session.get('advisor') != advisor_id:
+        flash("Please login as advisor", "warning")
+        return redirect(url_for('login_advisor'))
     
-    # Update the advisor's chosen program
-    advisor.program_id = program_id
-    db.session.commit()
-    
-    flash("Program selected successfully", "success")
+    # Check if an application for this program already exists:
+    existing_application = AdvisorApplication.query.filter_by(advisor_id=advisor_id, program_id=program_id).first()
+    if existing_application:
+        flash("You have already applied for this program.", "warning")
+    else:
+        new_application = AdvisorApplication(
+            id=generate_uuid(),
+            advisor_id=advisor_id,
+            program_id=program_id,
+            created_at=datetime.utcnow()
+        )
+        db.session.add(new_application)
+        db.session.commit()
+        flash("Application submitted successfully.", "success")
     return redirect(url_for('advisor_dashboard', advisor_id=advisor_id))
+
 
 
 @app.route('/advisors/<string:advisor_id>/delete_program', methods=['POST'])
@@ -621,16 +627,22 @@ def assign_student(advisor_id):
     advisor = Advisor.query.get_or_404(advisor_id)
     return redirect(url_for('agency_advisors', agency_id=advisor.agency_id))
 '''
-'''
-@app.route('/advisors/<string:advisor_id>/delete', methods=['POST'])
-def delete_advisor_assignment(advisor_id):
-    advisor = Advisor.query.get_or_404(advisor_id)
-    advisor.program_id = None  # Reset the advisor's application
-    # Optionally, you may also delete any student assignments associated with this advisor.
+
+@app.route('/advisor_applications/<string:application_id>/delete', methods=['POST'])
+def delete_advisor_application(application_id):
+    application = AdvisorApplication.query.get_or_404(application_id)
+    advisor_id = application.advisor_id
+    db.session.delete(application)
     db.session.commit()
-    flash("Advisor application deleted", "success")
-    return redirect(url_for('agency_advisors', agency_id=advisor.agency_id))
-'''
+    flash("Application deleted successfully", "success")
+    return redirect(url_for('advisor_dashboard', advisor_id=advisor_id))
+
+@app.route('/programs/<string:program_id>/offer_assistance')
+def offer_assistance(program_id):
+    # Ensure the advisor remains logged in (session check) if needed.
+    program = Program.query.get_or_404(program_id)
+    # Render a dedicated page or modal to offer assistance.
+    return render_template('offer_assistance.html', program=program)
 
 @app.route('/error')
 def error():

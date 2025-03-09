@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block content %}
 <h2>Agency Dashboard - Advisors</h2>
 <table class="table">
   <thead>
@@ -16,34 +17,55 @@
     <tr>
       <td>{{ advisor.full_name }}</td>
       <td>{{ advisor.country_of_residence or "N/A" }}</td>
-      <td>{% for program in programs %} {% if program.id == advisor.program_id %} {{ program.university }} {% endif %} {% endfor %}</td>
-      <td>{% for program in programs %} {% if program.id == advisor.program_id %} {{ program.name }} {% endif %} {% endfor %}</td>
-
+      <td>
+        {% for program in programs %}
+          {% if program.id == advisor.program_id %}
+            {{ program.university }}
+          {% endif %}
+        {% endfor %}
+      </td>
+      <td>
+        {% for program in programs %}
+          {% if program.id == advisor.program_id %}
+            {{ program.name }}
+          {% endif %}
+        {% endfor %}
+      </td>
       <td>
         <strong>Assigned Students & Programs:</strong><br />
-        {% for assignment in advisor_assignments %} {% if assignment.advisor_id == advisor.id %} {% for student in available_students %} {% if student.id == assignment.student_id %} {{
-        student.full_name }} - {% for program in programs %} {% if program.id == student.program_id %} {{ program.name }} ({{ program.university }}) {% endif %} {% endfor %}
-        <form method="POST" action="{{ url_for('unassign_student', agency_id=session.get('agency'), advisor_id=advisor.id, student_id=student.id) }}" style="display: inline">
-          <button type="submit" class="btn btn-sm btn-danger">Remove</button>
-        </form>
-        <br />
-        {% endif %} {% endfor %} {% endif %} {% endfor %}
+        {% for assignment in advisor_assignments %}
+          {% if assignment.advisor_id == advisor.id %}
+            {% for student in available_students %}
+              {% if student.id == assignment.student_id %}
+                {{ student.full_name }} -
+                {% for program in programs %}
+                  {% if program.id == student.program_id %}
+                    {{ program.name }} ({{ program.university }})
+                  {% endif %}
+                {% endfor %}
+                <form method="POST" action="{{ url_for('unassign_student', agency_id=session.get('agency'), advisor_id=advisor.id, student_id=student.id) }}" style="display: inline">
+                  <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                </form>
+                <br />
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
       </td>
-
       <td>
-        <!-- Button to trigger the assign modal -->
-        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#assignModal{{ advisor.id }}">Assign Advisor</button>
+        <!-- Button to trigger the assign student modal -->
+        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#assignModal{{ advisor.id }}">Assign Student</button>
         <button class="btn btn-sm btn-danger">Delete</button>
       </td>
     </tr>
 
-    <!-- Modal for assigning advisor -->
+    <!-- Modal for assigning student -->
     <div class="modal fade" id="assignModal{{ advisor.id }}" tabindex="-1" aria-labelledby="assignModalLabel{{ advisor.id }}" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <form method="POST" action="{{ url_for('assign_advisor', agency_id=session.get('agency'), advisor_id=advisor.id) }}">
             <div class="modal-header">
-              <h5 class="modal-title" id="assignModalLabel{{ advisor.id }}">Assign Advisor to Student</h5>
+              <h5 class="modal-title" id="assignModalLabel{{ advisor.id }}">Assign Student to Advisor</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -52,7 +74,7 @@
                 <select name="student_id" id="studentSelect{{ advisor.id }}" class="form-control" required>
                   <option value="">Select a Student</option>
                   {% for student in available_students %}
-                  <option value="{{ student.id }}">{{ student.full_name }} ({{ student.email }})</option>
+                    <option value="{{ student.id }}">{{ student.full_name }} ({{ student.email }})</option>
                   {% endfor %}
                 </select>
               </div>
@@ -69,4 +91,3 @@
   </tbody>
 </table>
 {% endblock %}
-

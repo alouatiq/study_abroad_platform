@@ -87,3 +87,14 @@ class AdvisorAssignment(db.Model):
     student_id = db.Column(db.String(36), db.ForeignKey(
         'students.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class AdvisorApplication(db.Model):
+    __tablename__ = 'advisor_applications'
+    id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
+    advisor_id = db.Column(db.String(36), db.ForeignKey('advisor.id'), nullable=False)
+    program_id = db.Column(db.String(36), db.ForeignKey('programs.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships for easier access:
+    advisor = db.relationship("Advisor", backref="applications")
+    program = db.relationship("Program", backref="advisor_applications")

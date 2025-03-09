@@ -38,13 +38,9 @@ class AdvisorRegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[
                                      DataRequired(), EqualTo('password')])
-    country_of_residence = StringField(
-        'Country of Residence', validators=[DataRequired()])
+    country_of_residence = StringField('Country of Residence', validators=[DataRequired()])
     phone_number = StringField('Phone Number', validators=[])
-    # agency_id = SelectField('Agency', coerce=str,
-    #                         validators=[])  # DataRequired()
-    # program_id = SelectField('Program', coerce=str,
-    #                          validators=[])  # DataRequired()
+    agency_id = SelectField('Agency', coerce=str, validators=[DataRequired()])
     submit = SubmitField('Register')
 
 
