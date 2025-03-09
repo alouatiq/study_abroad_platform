@@ -592,6 +592,16 @@ def choose_program(advisor_id):
     flash("Program selected successfully", "success")
     return redirect(url_for('advisor_dashboard', advisor_id=advisor_id))
 
+
+@app.route('/advisors/<string:advisor_id>/delete_program', methods=['POST'])
+def delete_program_application(advisor_id):
+    advisor = Advisor.query.get_or_404(advisor_id)
+    advisor.program_id = None  # remove the selected program
+    db.session.commit()
+    flash("Program selection removed.", "success")
+    return redirect(url_for('advisor_dashboard', advisor_id=advisor_id))
+
+'''
 @app.route('/assign_student/<string:advisor_id>', methods=['POST'])
 def assign_student(advisor_id):
     student_id = request.form.get('student_id')
@@ -610,7 +620,8 @@ def assign_student(advisor_id):
         flash("Student assigned successfully", "success")
     advisor = Advisor.query.get_or_404(advisor_id)
     return redirect(url_for('agency_advisors', agency_id=advisor.agency_id))
-
+'''
+'''
 @app.route('/advisors/<string:advisor_id>/delete', methods=['POST'])
 def delete_advisor_assignment(advisor_id):
     advisor = Advisor.query.get_or_404(advisor_id)
@@ -619,7 +630,7 @@ def delete_advisor_assignment(advisor_id):
     db.session.commit()
     flash("Advisor application deleted", "success")
     return redirect(url_for('agency_advisors', agency_id=advisor.agency_id))
-
+'''
 
 @app.route('/error')
 def error():
