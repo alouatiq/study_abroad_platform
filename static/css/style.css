@@ -1,11 +1,85 @@
+/* Define color variables for a light blue theme */
+:root {
+  --primary-color: #4fc3f7;       /* Light blue for buttons, etc. */
+  --primary-light: #81d4fa;
+  --primary-dark: #0288d1;
+  --background-color: #e1f5fe;    /* Very light blue background */
+  --text-color: #333;
+  --nav-bg: #b3e5fc;            /* Light blue for the navbar background */
+  --nav-text: #0277bd;          /* Darker blue for navbar text */
+  --card-border: #81d4fa;
+}
+
+/* General styles */
 body {
-    background-color: #f8f9fa;
-    color: #333;
-  }
-  
-  .navbar {
-    margin-bottom: 20px;
-  }
-  
-  /* Additional custom styles for cards, tables, modals, etc. */
-  
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar styles */
+.navbar {
+  background-color: var(--nav-bg) !important;
+  margin-bottom: 20px;
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link {
+  color: var(--nav-text) !important;
+}
+
+.navbar .nav-link:hover {
+  color: var(--primary-dark) !important;
+}
+
+/* Card styles */
+.card {
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.card h5 {
+  color: var(--primary-dark);
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+/* Footer styles */
+.footer {
+  background-color: var(--nav-bg);
+  color: var(--nav-text);
+  padding: 20px 0;
+}
+
+/* Additional styles for tables, modals, etc. */
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f0faff;
+}
+
+.modal-content {
+  border-radius: 4px;
+}

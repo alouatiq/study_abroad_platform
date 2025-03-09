@@ -1,38 +1,72 @@
 {% extends "base.html" %} {% block content %}
-<h2>Agency Advisors</h2>
-<ul>
-  {% for advisor in advisors %}
-  <li>
-    {{ advisor.full_name }}
-    <form
-      action="{{ url_for('assign_advisor', agency_id=agency_id, advisor_id=advisor.id) }}"
-      method="POST"
-      style="display: inline"
-    >
-      <select name="student_id" class="form-control" required>
-        <option value="">Select a Student</option>
-        {% for student in available_students %}
-        <option value="{{ student.id }}">{{ student.full_name }}</option>
-        {% endfor %}
-      </select>
-      <button type="submit" class="btn btn-primary btn-sm">Assign</button>
-    </form>
-    <ul>
-      {% for assignment in advisor_assignments %} {% if assignment.advisor_id ==
-      advisor.id %}
-      <li>
-        {{ assignment.student.full_name }}
-        <form
-          action="{{ url_for('unassign_student', agency_id=agency_id, advisor_id=advisor.id, student_id=assignment.student_id) }}"
-          method="POST"
-          style="display: inline"
-        >
-          <button type="submit" class="btn btn-danger btn-sm">Unassign</button>
+<h2>Agency Dashboard - Advisors</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Advisor Name</th>
+      <th>Country of Residence</th>
+      <th>Program's University</th>
+      <th>Program Name</th>
+      <th>Assisted Students</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for advisor in advisors %}
+    <tr>
+      <td>{{ advisor.full_name }}</td>
+      <td>{{ advisor.country_of_residence or "N/A" }}</td>
+      <td>{% for program in programs %} {% if program.id == advisor.program_id %} {{ program.university }} {% endif %} {% endfor %}</td>
+      <td>{% for program in programs %} {% if program.id == advisor.program_id %} {{ program.name }} {% endif %} {% endfor %}</td>
+
+      <td>
+        <strong>Assigned Students & Programs:</strong><br />
+        {% for assignment in advisor_assignments %} {% if assignment.advisor_id == advisor.id %} {% for student in available_students %} {% if student.id == assignment.student_id %} {{
+        student.full_name }} - {% for program in programs %} {% if program.id == student.program_id %} {{ program.name }} ({{ program.university }}) {% endif %} {% endfor %}
+        <form method="POST" action="{{ url_for('unassign_student', agency_id=session.get('agency'), advisor_id=advisor.id, student_id=student.id) }}" style="display: inline">
+          <button type="submit" class="btn btn-sm btn-danger">Remove</button>
         </form>
-      </li>
-      {% endif %} {% endfor %}
-    </ul>
-  </li>
-  {% endfor %}
-</ul>
+        <br />
+        {% endif %} {% endfor %} {% endif %} {% endfor %}
+      </td>
+
+      <td>
+        <!-- Button to trigger the assign modal -->
+        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#assignModal{{ advisor.id }}">Assign Advisor</button>
+        <button class="btn btn-sm btn-danger">Delete</button>
+      </td>
+    </tr>
+
+    <!-- Modal for assigning advisor -->
+    <div class="modal fade" id="assignModal{{ advisor.id }}" tabindex="-1" aria-labelledby="assignModalLabel{{ advisor.id }}" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form method="POST" action="{{ url_for('assign_advisor', agency_id=session.get('agency'), advisor_id=advisor.id) }}">
+            <div class="modal-header">
+              <h5 class="modal-title" id="assignModalLabel{{ advisor.id }}">Assign Advisor to Student</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="studentSelect{{ advisor.id }}">Select Student</label>
+                <select name="student_id" id="studentSelect{{ advisor.id }}" class="form-control" required>
+                  <option value="">Select a Student</option>
+                  {% for student in available_students %}
+                  <option value="{{ student.id }}">{{ student.full_name }} ({{ student.email }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Assign</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock %}
+

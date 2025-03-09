@@ -1,14 +1,8 @@
-{% extends "base.html" %} {% block content %}
-<h2>Advisor Dashboard</h2>
-<p>Welcome, {{ advisor.full_name }}!</p>
-<a
-  href="{{ url_for('advisor_students', advisor_id=advisor.id) }}"
-  class="btn btn-primary"
-  >View Students</a
->
-<h2>Advisor Dashboard - Selected Programs</h2>
-<!-- Placeholder for a table of programs applied to by the advisor -->
-<table class="table">
+{% extends "base.html" %}
+{% block content %}
+<h2>Selected Programs</h2>
+
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Program Name</th>
@@ -22,19 +16,73 @@
     </tr>
   </thead>
   <tbody>
+    {% for application in applications %}
     <tr>
-      <td>Sample Program</td>
-      <td>University X</td>
-      <td>Country</td>
-      <td>Field</td>
-      <td>Agency</td>
-      <td>2025-01-01</td>
-      <td>2024-12-01</td>
       <td>
-        <button class="btn btn-sm btn-secondary">Offer Assistance</button>
-        <button class="btn btn-sm btn-danger">Delete</button>
+        <!-- Clicking the program name opens a modal with program details -->
+        <a href="#" data-toggle="modal" data-target="#programDetailModal{{ application.id }}">
+          {{ application.program.name }}
+        </a>
+      </td>
+      <td>{{ application.program.university }}</td>
+      <td>{{ application.program.country }}</td>
+      <td>{{ application.program.field }}</td>
+      <td>{{ application.program.agency.name }}</td>
+      <td>
+        {% if application.program.deadline %}
+          {{ application.program.deadline.strftime('%Y-%m-%d') }}
+        {% else %}
+          N/A
+        {% endif %}
+      </td>
+      <td>{{ application.created_at.strftime('%Y-%m-%d') }}</td>
+      <td>
+        <!-- Offer Assistance button; directs the advisor to the program details page -->
+        <a href="{{ url_for('offer_assistance', program_id=application.program.id) }}" class="btn btn-sm btn-outline-primary">Offer Assistance</a>
+        <!-- Delete button for deleting the application -->
+        <form action="{{ url_for('delete_advisor_application', application_id=application.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this application?');">
+          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+        </form>
       </td>
     </tr>
+    
+    <!-- Program Detail Modal for this application -->
+    <div class="modal fade" id="programDetailModal{{ application.id }}" tabindex="-1" role="dialog" aria-labelledby="programDetailModalLabel{{ application.id }}" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="programDetailModalLabel{{ application.id }}">Program Details</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Program Name:</strong> {{ application.program.name }}</p>
+            <p><strong>University:</strong> {{ application.program.university }}</p>
+            <p><strong>Country:</strong> {{ application.program.country }}</p>
+            <p><strong>Field:</strong> {{ application.program.field }}</p>
+            <p><strong>Agency:</strong> {{ application.program.agency.name }}</p>
+            <p><strong>Deadline:</strong>
+              {% if application.program.deadline %}
+                {{ application.program.deadline.strftime('%Y-%m-%d') }}
+              {% else %}
+                N/A
+              {% endif %}
+            </p>
+            <p><strong>Description:</strong> {{ application.program.description or 'No description available' }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    {% else %}
+    <tr>
+      <td colspan="8">No applications found.</td>
+    </tr>
+    {% endfor %}
   </tbody>
 </table>
 {% endblock %}

@@ -1,21 +1,30 @@
+// Function to fetch programs based on current filter input values
 function fetchPrograms() {
-  // Gather filter values
-  const fee = document.getElementById("filter-fee").value;
-  const country = document.getElementById("filter-country").value;
-  const field = document.getElementById("filter-field").value;
-  const university = document.getElementById("filter-university").value;
+  // Retrieve filter values, if the input exists (fallback to empty string)
+  const feeInput = document.getElementById("filter-fee");
+  const countryInput = document.getElementById("filter-country");
+  const fieldInput = document.getElementById("filter-field");
+  const universityInput = document.getElementById("filter-university");
 
-  let url = `/api/programs?fee=${fee}&country=${country}&field=${field}&university=${university}`;
+  const fee = feeInput ? feeInput.value : "";
+  const country = countryInput ? countryInput.value : "";
+  const field = fieldInput ? fieldInput.value : "";
+  const university = universityInput ? universityInput.value : "";
+
+  // Build the API URL with query parameters (properly encoded)
+  const url = `/api/programs?fee=${encodeURIComponent(fee)}&country=${encodeURIComponent(country)}&field=${encodeURIComponent(field)}&university=${encodeURIComponent(university)}`;
+
   fetch(url)
-    .then((response) => response.json())
-    .then((programs) => {
+    .then(response => response.json())
+    .then(programs => {
       const container = document.getElementById("programs-list");
-      container.innerHTML = "";
-      programs.forEach((program) => {
-        // Create program card elements dynamically
-        let card = document.createElement("div");
-        card.className = "col-md-4 mb-3";
-        card.innerHTML = `
+      if (container) {
+        container.innerHTML = "";
+        programs.forEach(program => {
+          // Create a card for each program
+          const card = document.createElement("div");
+          card.className = "col-md-4 mb-3";
+          card.innerHTML = `
             <div class="card h-100">
               <div class="card-body">
                 <h5>${program.name}</h5>
@@ -25,7 +34,25 @@ function fetchPrograms() {
                 <a href="/programs/${program.id}" class="btn btn-outline-primary">View Details</a>
               </div>
             </div>`;
-        container.appendChild(card);
-      });
+          container.appendChild(card);
+        });
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching programs:", error);
     });
 }
+
+// On DOMContentLoaded, fetch the initial list of programs
+document.addEventListener("DOMContentLoaded", function () {
+  fetchPrograms();
+
+  // Attach input event listeners to filter inputs (if they exist) to update the program list in real time
+  const filterIds = ["filter-fee", "filter-country", "filter-field", "filter-university"];
+  filterIds.forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+      input.addEventListener("input", fetchPrograms);
+    }
+  });
+});

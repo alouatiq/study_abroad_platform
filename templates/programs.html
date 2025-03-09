@@ -1,32 +1,29 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block content %}
 <h2>Study Abroad Programs</h2>
-<!-- Filter Section -->
+
+<!-- Optional: Filter Section -->
 <div class="row mb-3">
   <div class="col-md-3">
-    <input type="number" id="filter-fee" placeholder="Max Fee" class="form-control" />
+    <input type="number" id="filter-fee" placeholder="Max Fee" class="form-control">
   </div>
   <div class="col-md-3">
-    <input type="text" id="filter-country" placeholder="Country" class="form-control" />
+    <input type="text" id="filter-country" placeholder="Country" class="form-control">
   </div>
   <div class="col-md-3">
-    <input type="text" id="filter-field" placeholder="Field" class="form-control" />
+    <input type="text" id="filter-field" placeholder="Field" class="form-control">
   </div>
   <div class="col-md-3">
-    <input type="text" id="filter-university" placeholder="University" class="form-control" />
+    <input type="text" id="filter-university" placeholder="University" class="form-control">
   </div>
 </div>
-<div id="programs-list" class="row">
-  <!-- Programs are loaded via JavaScript -->
+
+<!-- Container for Program Cards -->
+<div class="row" id="programs-list">
+  <!-- The program cards will be injected here by main.js -->
 </div>
-<script>
-  // When the page loads, call the API to fetch all programs
-  document.addEventListener("DOMContentLoaded", function () {
-    fetchPrograms();
-    // Attach event listeners for filtering inputs
-    const filters = ["filter-fee", "filter-country", "filter-field", "filter-university"];
-    filters.forEach((filterId) => {
-      document.getElementById(filterId).addEventListener("input", fetchPrograms);
-    });
-  });
-</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}
