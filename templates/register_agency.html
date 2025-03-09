@@ -12,6 +12,12 @@
     {{ form.confirm_password.label }} {{
     form.confirm_password(class="form-control") }}
   </div>
+  <div class="mb-3">
+    {{ form.description.label }} {{ form.description(class="form-control") }}
+  </div>
+  <div class="mb-3">
+    {{ form.website.label }} {{ form.website(class="form-control") }}
+  </div>
   <button type="submit" class="btn btn-success">{{ form.submit.label }}</button>
 </form>
 {% endblock %}

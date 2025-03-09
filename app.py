@@ -46,7 +46,6 @@ def programs():
     return render_template("programs.html")
 
 
-
 @app.route('/api/programs', methods=['GET'])
 def api_programs():
     fee = request.args.get('fee')
@@ -82,17 +81,18 @@ def api_advisors():
     program_name = request.args.get('program_name', '')
     country = request.args.get('country', '')
     university = request.args.get('university', '')
-    
+
     # Perform an outer join with Program (if an advisor has chosen a program)
     query = Advisor.query.outerjoin(Program, Advisor.program_id == Program.id)
-    
+
     if program_name:
         query = query.filter(Program.name.ilike(f'%{program_name}%'))
     if country:
-        query = query.filter(Advisor.country_of_residence.ilike(f'%{country}%'))
+        query = query.filter(
+            Advisor.country_of_residence.ilike(f'%{country}%'))
     if university:
         query = query.filter(Program.university.ilike(f'%{university}%'))
-    
+
     advisors = query.all()
     data = []
     for advisor in advisors:
@@ -104,7 +104,8 @@ def api_advisors():
             program_university = None
             program_name_val = None
         # Build list of assisted student names from AdvisorAssignment model
-        assignments = AdvisorAssignment.query.filter_by(advisor_id=advisor.id).all()
+        assignments = AdvisorAssignment.query.filter_by(
+            advisor_id=advisor.id).all()
         assisted_students = []
         for assignment in assignments:
             student = Student.query.get(assignment.student_id)
@@ -120,6 +121,7 @@ def api_advisors():
         })
     return jsonify(data)
 
+
 @app.route('/programs/<program_id>')
 def program_detail(program_id):
     program = Program.query.get_or_404(program_id)
@@ -133,6 +135,9 @@ def register_student():
         email = form.email.data
         full_name = form.full_name.data
         password = generate_password_hash(form.password.data)
+        country_of_residence = form.country_of_residence.data
+        nationality = form.nationality.data
+        phone_number = form.phone_number.data
 
         if Student.query.filter_by(email=email).first():
             flash("Email already exists", "danger")
@@ -142,12 +147,20 @@ def register_student():
             id=generate_uuid(),
             email=email,
             full_name=full_name,
-            password=password
+            password=password, phone_number=phone_number, nationality=nationality,
+            country_of_residence=country_of_residence
         )
         db.session.add(new_student)
         db.session.commit()
         flash("Registration successful. Please login.", "success")
         return redirect(url_for('login_student'))
+    else:
+        for err in form.confirm_password.errors:
+            flash(err, 'danger')
+        for err in form.email.errors:
+            flash(err, 'danger')
+        for err in form.full_name.errors:
+            flash(err, 'danger')
     return render_template('register_student.html', form=form)
 
 
@@ -245,13 +258,13 @@ def student_profile(student_id):
 @app.route('/programs/<string:program_id>/edit', methods=['POST'])
 def edit_program(program_id):
     program = Program.query.get_or_404(program_id)
-    
+
     # Update fields from the modal form
     program.name = request.form.get('name')
     program.university = request.form.get('university')
     program.field = request.form.get('field')
     program.country = request.form.get('country')
-    
+
     fee = request.form.get('fee')
     try:
         program.fee = float(fee) if fee else 0
@@ -268,10 +281,11 @@ def edit_program(program_id):
         program.deadline = None
 
     program.description = request.form.get('description')
-    
+
     db.session.commit()
     flash("Program updated successfully", "success")
     return redirect(url_for('agency_dashboard', agency_id=program.agency_id))
+
 
 @app.route('/programs/<string:program_id>/delete', methods=['POST'])
 def delete_program(program_id):
@@ -291,6 +305,8 @@ def register_agency():
     if form.validate_on_submit():
         name = form.name.data
         password = generate_password_hash(form.password.data)
+        description = form.description.data
+        website = form.website.data
 
         if Agency.query.filter_by(name=name).first():
             flash("Agency already exists", "danger")
@@ -299,12 +315,17 @@ def register_agency():
         new_agency = Agency(
             id=generate_uuid(),
             name=name,
-            password=password
+            password=password, description=description, website=website
         )
         db.session.add(new_agency)
         db.session.commit()
         flash("Agency registration successful. Please login.", "success")
         return redirect(url_for('login_agency'))
+    else:
+        for err in form.confirm_password.errors:
+            flash(err, 'danger')
+        for err in form.website.errors:
+            flash(err, 'danger')
     return render_template('register_agency.html', form=form)
 
 
@@ -360,16 +381,17 @@ def agency_advisors(agency_id):
     advisors = Advisor.query.filter_by(agency_id=agency_id).all()
     programs = Program.query.filter_by(agency_id=agency_id).all()
     programs_dict = {p.id: p for p in programs}
-    advisor_assignments = AdvisorAssignment.query.all()  # You may filter this further if needed.
-    available_students = Student.query.all()  # Optionally, filter out already assigned students.
-    return render_template('agency_advisors.html', 
-                           agency=agency, 
-                           advisors=advisors, 
-                           programs=programs, 
-                           programs_dict=programs_dict, 
-                           advisor_assignments=advisor_assignments, 
+    # You may filter this further if needed.
+    advisor_assignments = AdvisorAssignment.query.all()
+    # Optionally, filter out already assigned students.
+    available_students = Student.query.all()
+    return render_template('agency_advisors.html',
+                           agency=agency,
+                           advisors=advisors,
+                           programs=programs,
+                           programs_dict=programs_dict,
+                           advisor_assignments=advisor_assignments,
                            available_students=available_students)
-
 
 
 @app.route('/agencies/<agency_id>/dashboard/advisors/<advisor_id>/unassign/<student_id>', methods=['POST'])
@@ -400,7 +422,8 @@ def assign_advisor(agency_id, advisor_id):
         flash("No student selected", "danger")
         return redirect(url_for('agency_advisors', agency_id=agency_id))
     # Check if the student is already assigned
-    existing_assignment = AdvisorAssignment.query.filter_by(student_id=student_id).first()
+    existing_assignment = AdvisorAssignment.query.filter_by(
+        student_id=student_id).first()
     if existing_assignment:
         flash("This student is already assigned to an advisor.", "warning")
         return redirect(url_for('agency_advisors', agency_id=agency_id))
@@ -413,7 +436,6 @@ def assign_advisor(agency_id, advisor_id):
     db.session.commit()
     flash("Student assigned successfully", "success")
     return redirect(url_for('agency_advisors', agency_id=agency_id))
-
 
 
 @app.route('/agencies/<agency_id>/profile', methods=['GET', 'POST'])
@@ -500,12 +522,10 @@ def register_advisor():
     form = AdvisorRegistrationForm()
     # Populate the agency choices from the database
     agencies = Agency.query.all()
-    form.agency_id.choices = [(agency.id, agency.name) for agency in agencies]  # Ensure this is a list
     if form.validate_on_submit():
         full_name = form.full_name.data
         email = form.email.data
         password = generate_password_hash(form.password.data)
-        agency_id = form.agency_id.data  # Now the agency is selected
         country_of_residence = form.country_of_residence.data
         phone_number = form.phone_number.data
 
@@ -514,7 +534,6 @@ def register_advisor():
             full_name=full_name,
             email=email,
             password=password,
-            agency_id=agency_id,
             country_of_residence=country_of_residence,
             phone_number=phone_number
         )
@@ -522,6 +541,13 @@ def register_advisor():
         db.session.commit()
         flash("Advisor registration successful. Please login.", "success")
         return redirect(url_for('login_advisor'))
+    else:
+        for err in form.confirm_password.errors:
+            flash(err, 'danger')
+        for err in form.email.errors:
+            flash(err, 'danger')
+        for err in form.full_name.errors:
+            flash(err, 'danger')
     return render_template('register_advisor.html', form=form)
 
 
@@ -548,10 +574,13 @@ def advisor_dashboard(advisor_id):
         flash("Please login as advisor", "warning")
         return redirect(url_for('login_advisor'))
     advisor = Advisor.query.get_or_404(advisor_id)
-    available_programs = Program.query.filter_by(agency_id=advisor.agency_id).all()
+    available_programs = Program.query.filter_by(
+        agency_id=advisor.agency_id).all()
     # Advisor's applications:
-    applications = AdvisorApplication.query.filter_by(advisor_id=advisor_id).all()
+    applications = AdvisorApplication.query.filter_by(
+        advisor_id=advisor_id).all()
     return render_template('advisor_dashboard.html', advisor=advisor, available_programs=available_programs, applications=applications)
+
 
 @app.route('/advisors/<advisor_id>/dashboard/students')
 def advisor_students(advisor_id):
@@ -580,9 +609,10 @@ def apply_for_program(advisor_id, program_id):
     if session.get('advisor') != advisor_id:
         flash("Please login as advisor", "warning")
         return redirect(url_for('login_advisor'))
-    
+
     # Check if an application for this program already exists:
-    existing_application = AdvisorApplication.query.filter_by(advisor_id=advisor_id, program_id=program_id).first()
+    existing_application = AdvisorApplication.query.filter_by(
+        advisor_id=advisor_id, program_id=program_id).first()
     if existing_application:
         flash("You have already applied for this program.", "warning")
     else:
@@ -598,7 +628,6 @@ def apply_for_program(advisor_id, program_id):
     return redirect(url_for('advisor_dashboard', advisor_id=advisor_id))
 
 
-
 @app.route('/advisors/<string:advisor_id>/delete_program', methods=['POST'])
 def delete_program_application(advisor_id):
     advisor = Advisor.query.get_or_404(advisor_id)
@@ -606,6 +635,7 @@ def delete_program_application(advisor_id):
     db.session.commit()
     flash("Program selection removed.", "success")
     return redirect(url_for('advisor_dashboard', advisor_id=advisor_id))
+
 
 '''
 @app.route('/assign_student/<string:advisor_id>', methods=['POST'])
@@ -628,6 +658,7 @@ def assign_student(advisor_id):
     return redirect(url_for('agency_advisors', agency_id=advisor.agency_id))
 '''
 
+
 @app.route('/advisor_applications/<string:application_id>/delete', methods=['POST'])
 def delete_advisor_application(application_id):
     application = AdvisorApplication.query.get_or_404(application_id)
@@ -637,12 +668,14 @@ def delete_advisor_application(application_id):
     flash("Application deleted successfully", "success")
     return redirect(url_for('advisor_dashboard', advisor_id=advisor_id))
 
+
 @app.route('/programs/<string:program_id>/offer_assistance')
 def offer_assistance(program_id):
     # Ensure the advisor remains logged in (session check) if needed.
     program = Program.query.get_or_404(program_id)
     # Render a dedicated page or modal to offer assistance.
     return render_template('offer_assistance.html', program=program)
+
 
 @app.route('/error')
 def error():
