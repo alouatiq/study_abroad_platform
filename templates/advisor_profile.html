@@ -1,22 +1,44 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <h2>Advisor Profile</h2>
 <form method="POST">
   <div class="mb-3">
     <label>Full Name</label>
-    <input type="text" name="full_name" class="form-control" value="{{ advisor.full_name }}" required />
+    <input
+      type="text"
+      name="full_name"
+      class="form-control"
+      value="{{ advisor.full_name }}"
+      required
+    />
   </div>
   <div class="mb-3">
     <label>Email</label>
-    <input type="email" name="email" class="form-control" value="{{ advisor.email }}" required />
+    <input
+      type="email"
+      name="email"
+      class="form-control"
+      disabled
+      value="{{ advisor.email }}"
+      required
+    />
   </div>
   <div class="mb-3">
     <label>Phone Number</label>
-    <input type="text" name="phone_number" class="form-control" value="{{ advisor.phone_number }}" />
+    <input
+      type="text"
+      name="phone_number"
+      class="form-control"
+      value="{{ advisor.phone_number }}"
+    />
   </div>
   <div class="mb-3">
     <label>Country of Residence</label>
-    <input type="text" name="country_of_residence" class="form-control" value="{{ advisor.country_of_residence }}" />
+    <input
+      type="text"
+      name="country_of_residence"
+      class="form-control"
+      value="{{ advisor.country_of_residence }}"
+    />
   </div>
   <button type="submit" class="btn btn-primary">Update Profile</button>
 </form>

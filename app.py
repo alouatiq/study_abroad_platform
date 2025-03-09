@@ -253,7 +253,9 @@ def student_profile(student_id):
     student = Student.query.get_or_404(student_id)
     if request.method == 'POST':
         student.full_name = request.form.get('full_name')
-        # Update additional fields as needed
+        student.phone_number = request.form.get('phone_number')
+        student.nationality = request.form.get('nationality')
+        student.country_of_residence = request.form.get('country_of_residence')
         db.session.commit()
         flash("Profile updated", "success")
         return redirect(url_for('student_profile', student_id=student_id))
@@ -450,7 +452,8 @@ def agency_profile(agency_id):
         return redirect(url_for('login_agency'))
     agency = Agency.query.get_or_404(agency_id)
     if request.method == 'POST':
-        agency.name = request.form.get('name')
+        agency.website = request.form.get('website')
+        agency.description = request.form.get('description')
         db.session.commit()
         flash("Profile updated", "success")
         return redirect(url_for('agency_profile', agency_id=agency_id))
@@ -495,6 +498,11 @@ def create_program(agency_id):
                 deadline, "%Y-%m-%d") if deadline else None
         except ValueError:
             deadline_dt = None
+
+        try:
+            available_scholarships = bool(int(available_scholarships))
+        except:
+            available_scholarships = False
 
         new_program = Program(
             id=generate_uuid(),
@@ -606,6 +614,8 @@ def advisor_profile(advisor_id):
     advisor = Advisor.query.get_or_404(advisor_id)
     if request.method == 'POST':
         advisor.full_name = request.form.get('full_name')
+        advisor.phone_number = request.form.get('phone_number')
+        advisor.country_of_residence = request.form.get('country_of_residence')
         db.session.commit()
         flash("Profile updated", "success")
         return redirect(url_for('advisor_profile', advisor_id=advisor_id))

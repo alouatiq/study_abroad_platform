@@ -1,18 +1,31 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <h2>Agency Profile</h2>
 <form method="POST">
   <div class="mb-3">
     <label>Agency Name</label>
-    <input type="text" name="name" class="form-control" value="{{ agency.name }}" required />
+    <input
+      type="text"
+      name="name"
+      class="form-control"
+      disabled
+      value="{{ agency.name }}"
+      required
+    />
   </div>
   <div class="mb-3">
     <label>Description</label>
-    <textarea name="description" class="form-control" rows="3">{{ agency.description }}</textarea>
+    <textarea name="description" class="form-control" rows="3">
+{{ agency.description }}</textarea
+    >
   </div>
   <div class="mb-3">
     <label>Website</label>
-    <input type="url" name="website" class="form-control" value="{{ agency.website }}" />
+    <input
+      type="url"
+      name="website"
+      class="form-control"
+      value="{{ agency.website }}"
+    />
   </div>
   <button type="submit" class="btn btn-success">Update Profile</button>
 </form>

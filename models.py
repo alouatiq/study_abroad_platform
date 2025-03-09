@@ -43,7 +43,7 @@ class Program(db.Model):
     languages = db.Column(db.String(50), default="English")
     proficiency_level = db.Column(db.String(50), default="B2")
     eligibility_criteria = db.Column(db.String(255))
-    available_scholarships = db.Column(db.String(255))
+    available_scholarships = db.Column(db.Boolean())
     deadline = db.Column(db.DateTime)
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -88,11 +88,14 @@ class AdvisorAssignment(db.Model):
         'students.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+
 class AdvisorApplication(db.Model):
     __tablename__ = 'advisor_applications'
     id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
-    advisor_id = db.Column(db.String(36), db.ForeignKey('advisor.id'), nullable=False)
-    program_id = db.Column(db.String(36), db.ForeignKey('programs.id'), nullable=False)
+    advisor_id = db.Column(db.String(36), db.ForeignKey(
+        'advisor.id'), nullable=False)
+    program_id = db.Column(db.String(36), db.ForeignKey(
+        'programs.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships for easier access:
