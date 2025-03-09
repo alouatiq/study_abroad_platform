@@ -171,13 +171,18 @@ def login_student():
         email = form.email.data
         password = form.password.data
         student = Student.query.filter_by(email=email).first()
+
         if student and check_password_hash(student.password, password):
             session['student'] = student.id
             flash("Logged in successfully", "success")
             return redirect(url_for('student_dashboard', student_id=student.id))
         else:
+
             flash("Invalid credentials", "danger")
-            return redirect(url_for('login_student'))
+            # return redirect(url_for('login_student'))
+    else:
+        for err in form.email.errors:
+            flash(err, 'danger')
     return render_template('login_student.html', form=form)
 
 
@@ -564,7 +569,10 @@ def login_advisor():
             return redirect(url_for('advisor_dashboard', advisor_id=advisor.id))
         else:
             flash("Invalid credentials", "danger")
-            return redirect(url_for('login_advisor'))
+            # return redirect(url_for('login_advisor'))
+    else:
+        for err in form.email.errors:
+            flash(err, 'danger')
     return render_template('login_advisor.html', form=form)
 
 
