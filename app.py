@@ -581,6 +581,17 @@ def create_program(agency_id):
 
     return render_template('create_program.html', agency_id=agency_id)
 
+@app.route('/agencies/<agency_id>/dashboard/advisors/<advisor_id>/delete', methods=['POST'])
+def delete_advisor(agency_id, advisor_id):
+    if session.get('agency') != agency_id:
+        flash("Please login as agency", "warning")
+        return redirect(url_for('login_agency'))
+    advisor = Advisor.query.get_or_404(advisor_id)
+    db.session.delete(advisor)
+    db.session.commit()
+    flash("Advisor deleted successfully", "success")
+    return redirect(url_for('agency_advisors', agency_id=agency_id))
+
 # --- Advisor Routes ---
 
 
