@@ -14,4 +14,12 @@
 >
   <button type="submit" class="btn btn-primary">Apply</button>
 </form>
+{% else: %}
+<form
+  action="{{ url_for('register_student', program_id=program.id) }}"
+  method="POST"
+>
+  <input type="hidden" name="hidden_val" value="{{program.id}}" />
+  <button type="submit" class="btn btn-primary">Apply</button>
+</form>
 {% endif %} {% endblock %}

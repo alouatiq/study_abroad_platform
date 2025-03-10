@@ -1,6 +1,9 @@
 {% extends "base.html" %} {% block content %}
 <h2>Student Login</h2>
-<form method="POST" action="{{ url_for('login_student') }}">
+<form
+  method="POST"
+  action="{{ url_for('login_student', program_id=program_id) }}"
+>
   {{ form.hidden_tag() }}
   <div class="mb-3">
     {{ form.email.label }} {{ form.email(class="form-control") }}
@@ -10,4 +13,8 @@
   </div>
   <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
 </form>
+<div class="mb-3">
+  Not having an account
+  <a href="{{url_for('register_student', program_id=0) }}">Sign Up</a>
+</div>
 {% endblock %}

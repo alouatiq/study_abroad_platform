@@ -36,7 +36,7 @@ def is_logged_in(role, user_id):
 # -------------------------
 
 
-@app.route('/home')
+@app.route('/')
 def home():
     return render_template('home.html')
 
@@ -128,8 +128,8 @@ def program_detail(program_id):
     return render_template('program_detail.html', program=program)
 
 
-@app.route('/register/student', methods=['GET', 'POST'])
-def register_student():
+@app.route('/register/student/<program_id>', methods=['GET', 'POST'])
+def register_student(program_id=0):
     form = StudentRegistrationForm()
     if form.validate_on_submit():
         email = form.email.data
@@ -141,7 +141,7 @@ def register_student():
 
         if Student.query.filter_by(email=email).first():
             flash("Email already exists", "danger")
-            return redirect(url_for('register_student'))
+            return redirect(url_for('register_student', program_id=program_id))
 
         new_student = Student(
             id=generate_uuid(),
@@ -153,7 +153,11 @@ def register_student():
         db.session.add(new_student)
         db.session.commit()
         flash("Registration successful. Please login.", "success")
-        return redirect(url_for('login_student'))
+        if program_id != "0":
+            # print("apply_to_program")
+            return redirect(url_for('login_student', program_id=program_id))
+        else:
+            return redirect(url_for('login_student', program_id=0))
     else:
         for err in form.confirm_password.errors:
             flash(err, 'danger')
@@ -161,36 +165,40 @@ def register_student():
             flash(err, 'danger')
         for err in form.full_name.errors:
             flash(err, 'danger')
-    return render_template('register_student.html', form=form)
+    return render_template('register_student.html', form=form, program_id=program_id)
 
 
-@app.route('/login/student', methods=['GET', 'POST'])
-def login_student():
+@app.route('/login/student/<program_id>', methods=['GET', 'POST'])
+def login_student(program_id=0):
     form = StudentLoginForm()
+    # print(f"0- program_id = {program_id}")
+
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
         student = Student.query.filter_by(email=email).first()
-
+        # print(f"program_id = {program_id}")
         if student and check_password_hash(student.password, password):
             session['student'] = student.id
             flash("Logged in successfully", "success")
-            return redirect(url_for('student_dashboard', student_id=student.id))
+            if program_id != "0":
+                return redirect(url_for('program_detail', program_id=program_id))
+            else:
+                return redirect(url_for('student_dashboard', student_id=student.id))
         else:
 
             flash("Invalid credentials", "danger")
-            # return redirect(url_for('login_student'))
     else:
         for err in form.email.errors:
             flash(err, 'danger')
-    return render_template('login_student.html', form=form)
+    return render_template('login_student.html', form=form, program_id=program_id)
 
 
 @app.route('/students/<student_id>/dashboard')
 def student_dashboard(student_id):
     if not is_logged_in('student', student_id):
         flash("You need to be logged in as a student", "warning")
-        return redirect(url_for('login_student'))
+        return redirect(url_for('login_student', program_id=0))
     student = Student.query.get_or_404(student_id)
     applications = StudentProgram.query.filter_by(student_id=student_id).all()
     return render_template('student_dashboard.html', student=student, applications=applications)
@@ -200,7 +208,7 @@ def student_dashboard(student_id):
 def apply_to_program(student_id, program_id):
     if not is_logged_in('student', student_id):
         flash("You need to be logged in to apply", "warning")
-        return redirect(url_for('login_student'))
+        return redirect(url_for('register_student', program_id=program_id))
 
     existing_application = StudentProgram.query.filter_by(
         student_id=student_id, program_id=program_id).first()
@@ -237,7 +245,7 @@ def delete_application(id):
 def student_documents(student_id):
     if not is_logged_in('student', student_id):
         flash("Please login to access your documents", "warning")
-        return redirect(url_for('login_student'))
+        return redirect(url_for('login_student', program_id=0))
     if request.method == 'POST':
         # File handling logic here
         flash("Documents updated", "success")
@@ -249,7 +257,7 @@ def student_documents(student_id):
 def student_profile(student_id):
     if not is_logged_in('student', student_id):
         flash("Please login to access your profile", "warning")
-        return redirect(url_for('login_student'))
+        return redirect(url_for('login_student', program_id=0))
     student = Student.query.get_or_404(student_id)
     if request.method == 'POST':
         student.full_name = request.form.get('full_name')
