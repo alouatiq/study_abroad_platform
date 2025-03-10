@@ -4,6 +4,7 @@ from flask_session import Session
 from config import Config
 from datetime import datetime
 import uuid
+import os
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import StudentRegistrationForm, StudentLoginForm, AgencyRegistrationForm, AgencyLoginForm, AdvisorRegistrationForm, AdvisorLoginForm
@@ -241,16 +242,61 @@ def delete_application(id):
     return redirect(url_for('student_dashboard', student_id=student_id))
 
 
+# @app.route('/students/<student_id>/dashboard/documents', methods=['GET', 'POST'])
+# def student_documents(student_id):
+#     if not is_logged_in('student', student_id):
+#         flash("Please login to access your documents", "warning")
+#         return redirect(url_for('login_student', program_id=0))
+#     if request.method == 'POST':
+#         # File handling logic here
+
+#         flash("Documents updated", "success")
+#         return redirect(url_for('student_documents', student_id=student_id))
+#     return render_template('student_documents.html')
+
 @app.route('/students/<student_id>/dashboard/documents', methods=['GET', 'POST'])
 def student_documents(student_id):
     if not is_logged_in('student', student_id):
         flash("Please login to access your documents", "warning")
         return redirect(url_for('login_student', program_id=0))
+
+    student_folder = os.path.join('static', 'documents', student_id)
+    os.makedirs(student_folder, exist_ok=True)
+
     if request.method == 'POST':
-        # File handling logic here
+        for file_key in ['picture', 'id_document', 'certificate']:
+            if file_key in request.files:
+                file = request.files[file_key]
+                if file:
+                    file_path = os.path.join(student_folder, file.filename)
+                    file.save(file_path)
+
         flash("Documents updated", "success")
         return redirect(url_for('student_documents', student_id=student_id))
-    return render_template('student_documents.html')
+
+    documents = []
+    for filename in os.listdir(student_folder):
+        documents.append(filename)
+
+    return render_template('student_documents.html', documents=documents, student_id=student_id)
+
+
+@app.route('/students/<student_id>/dashboard/documents/delete/<document>', methods=['POST'])
+def delete_document(student_id, document):
+    if not is_logged_in('student', student_id):
+        flash("Please login to delete your documents", "warning")
+        return redirect(url_for('login_student', program_id=0))
+
+    student_folder = os.path.join('static', 'documents', student_id)
+    file_path = os.path.join(student_folder, document)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        flash("Document deleted", "success")
+    else:
+        flash("Document not found", "danger")
+
+    return redirect(url_for('student_documents', student_id=student_id))
 
 
 @app.route('/students/<student_id>/profile', methods=['GET', 'POST'])

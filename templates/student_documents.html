@@ -1,19 +1,48 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <h2>Student Documents</h2>
 <form method="POST" enctype="multipart/form-data">
   <div class="mb-3">
     <label for="picture">Upload Picture</label>
-    <input type="file" name="picture" id="picture" class="form-control" required />
+    <input type="file" name="picture" id="picture" class="form-control" />
   </div>
   <div class="mb-3">
-    <label for="id_document">Upload ID</label>
-    <input type="file" name="id_document" id="id_document" class="form-control" required />
+    <label for="id_document">Upload ID Card</label>
+    <input
+      type="file"
+      name="id_document"
+      id="id_document"
+      class="form-control"
+    />
   </div>
   <div class="mb-3">
-    <label for="certificate">Upload Certificate</label>
-    <input type="file" name="certificate" id="certificate" class="form-control" required />
+    <label for="certificate">Upload Passport</label>
+    <input
+      type="file"
+      name="certificate"
+      id="certificate"
+      class="form-control"
+    />
   </div>
-  <button type="submit" class="btn btn-primary">Upload Documents</button>
+  <button type="submit" class="btn btn-primary">Upload Resume</button>
 </form>
+
+<h3>Uploaded Documents</h3>
+<ul>
+  {% for document in documents %}
+  <li>
+    <a
+      href="{{ url_for('static', filename='documents/' + student_id + '/' + document) }}"
+      download
+      >{{ document }}</a
+    >
+    <form
+      method="POST"
+      action="{{ url_for('delete_document', student_id=student_id, document=document) }}"
+      style="display: inline"
+    >
+      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
 {% endblock %}
