@@ -1,10 +1,16 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="d-flex justify-content-between align-items-center">
-  <h2>Student Dashboard</h2>
-  <a href="{{ url_for('student_documents', student_id=student.id) }}" class="btn btn-primary">Upload Documents</a>
-</div>
+{% extends "base.html" %} {% block content %}
+<h2>Student Dashboard</h2>
 <p>Welcome, {{ student.full_name }}!</p>
+<div class="d-flex justify-content-between align-items-center">
+  <a
+    href="{{ url_for('student_documents', student_id=student.id) }}"
+    class="btn btn-primary"
+    >Upload Documents</a
+  >
+  <a href="{{ url_for('programs') }}" class="btn btn-primary"
+    >Apply to a Program</a
+  >
+</div>
 
 <h3>My Applications</h3>
 <table class="table">
@@ -29,7 +35,12 @@
       <td>{{ app.status }}</td>
       <td>{{ app.created_at.strftime('%Y-%m-%d') }}</td>
       <td>
-        <form action="{{ url_for('delete_application', id=app.id) }}" method="POST" style="display: inline" onsubmit="return confirm('Are you sure you want to delete this application?');">
+        <form
+          action="{{ url_for('delete_application', id=app.id) }}"
+          method="POST"
+          style="display: inline"
+          onsubmit="return confirm('Are you sure you want to delete this application?');"
+        >
           <button type="submit" class="btn btn-sm btn-danger">Delete</button>
         </form>
       </td>
@@ -41,5 +52,5 @@
     {% endfor %}
   </tbody>
 </table>
-<a href="{{ url_for('programs') }}" class="btn btn-primary">Apply to a Program</a>
+
 {% endblock %}

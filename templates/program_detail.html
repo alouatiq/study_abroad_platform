@@ -17,9 +17,24 @@
 {% else: %}
 <form
   action="{{ url_for('register_student', program_id=program.id) }}"
-  method="POST"
+  method="get"
 >
   <input type="hidden" name="hidden_val" value="{{program.id}}" />
   <button type="submit" class="btn btn-primary">Apply</button>
+</form>
+{% endif %} {% if 'advisor' in session %}
+<form
+  action="{{ url_for('offer_assistance', advisor_id=session['advisor'], program_id=program.id) }}"
+  method="POST"
+>
+  <button type="submit" class="btn btn-info">Offer Assistance</button>
+</form>
+{% else: %}
+<form
+  action="{{ url_for('register_advisor', program_id=program.id) }}"
+  method="get"
+>
+  <input type="hidden" name="hidden_val" value="{{program.id}}" />
+  <button type="submit" class="btn btn-info">Offer Assistance</button>
 </form>
 {% endif %} {% endblock %}

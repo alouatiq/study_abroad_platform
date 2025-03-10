@@ -1,6 +1,9 @@
 {% extends "base.html" %} {% block content %}
 <h2>Advisor Login</h2>
-<form method="POST" action="{{ url_for('login_advisor') }}">
+<form
+  method="POST"
+  action="{{ url_for('login_advisor', program_id=program_id) }}"
+>
   {{ form.hidden_tag() }}
   <div class="mb-3">
     {{ form.email.label }} {{ form.email(class="form-control") }}

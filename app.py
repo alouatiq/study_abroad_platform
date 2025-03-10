@@ -123,7 +123,7 @@ def api_advisors():
     return jsonify(data)
 
 
-@app.route('/programs/<program_id>')
+@app.route('/programs/<program_id>', methods=['GET', 'POST'])
 def program_detail(program_id):
     program = Program.query.get_or_404(program_id)
     return render_template('program_detail.html', program=program)
@@ -584,17 +584,20 @@ def create_program(agency_id):
 # --- Advisor Routes ---
 
 
-@app.route('/register/advisor', methods=['GET', 'POST'])
-def register_advisor():
+@app.route('/register/advisor/<program_id>', methods=['GET', 'POST'])
+def register_advisor(program_id=0):
     form = AdvisorRegistrationForm()
     # Populate the agency choices from the database
-    agencies = Agency.query.all()
     if form.validate_on_submit():
         full_name = form.full_name.data
         email = form.email.data
         password = generate_password_hash(form.password.data)
         country_of_residence = form.country_of_residence.data
         phone_number = form.phone_number.data
+
+        if Advisor.query.filter_by(email=email).first():
+            flash("Email already exists", "danger")
+            return redirect(url_for('register_advisor', program_id=program_id))
 
         new_advisor = Advisor(
             id=generate_uuid(),
@@ -607,7 +610,14 @@ def register_advisor():
         db.session.add(new_advisor)
         db.session.commit()
         flash("Advisor registration successful. Please login.", "success")
-        return redirect(url_for('login_advisor'))
+
+        if program_id != "0":
+            # print("apply_to_program")
+            return redirect(url_for('login_advisor', program_id=program_id))
+            # return redirect(url_for('login_student', program_id=program_id))
+        else:
+            return redirect(url_for('login_advisor', program_id=0))
+
     else:
         for err in form.confirm_password.errors:
             flash(err, 'danger')
@@ -615,11 +625,11 @@ def register_advisor():
             flash(err, 'danger')
         for err in form.full_name.errors:
             flash(err, 'danger')
-    return render_template('register_advisor.html', form=form)
+    return render_template('register_advisor.html', form=form, program_id=program_id)
 
 
-@app.route('/login/advisor', methods=['GET', 'POST'])
-def login_advisor():
+@app.route('/login/advisor/<program_id>', methods=['GET', 'POST'])
+def login_advisor(program_id=0):
     form = AdvisorLoginForm()
     if form.validate_on_submit():
         email = form.email.data
@@ -628,14 +638,18 @@ def login_advisor():
         if advisor and check_password_hash(advisor.password, password):
             session['advisor'] = advisor.id
             flash("Logged in successfully", "success")
-            return redirect(url_for('advisor_dashboard', advisor_id=advisor.id))
+
+            if program_id != "0":
+                return redirect(url_for('program_detail', program_id=program_id))
+            else:
+                return redirect(url_for('advisor_dashboard', advisor_id=advisor.id))
         else:
             flash("Invalid credentials", "danger")
             # return redirect(url_for('login_advisor'))
     else:
         for err in form.email.errors:
             flash(err, 'danger')
-    return render_template('login_advisor.html', form=form)
+    return render_template('login_advisor.html', form=form, program_id=program_id)
 
 
 @app.route('/advisors/<string:advisor_id>/dashboard')
@@ -644,12 +658,13 @@ def advisor_dashboard(advisor_id):
         flash("Please login as advisor", "warning")
         return redirect(url_for('login_advisor'))
     advisor = Advisor.query.get_or_404(advisor_id)
-    available_programs = Program.query.filter_by(
-        agency_id=advisor.agency_id).all()
+    # available_programs = Program.query.filter_by(
+    #     agency_id=advisor.agency_id).all()
     # Advisor's applications:
     applications = AdvisorApplication.query.filter_by(
         advisor_id=advisor_id).all()
-    return render_template('advisor_dashboard.html', advisor=advisor, available_programs=available_programs, applications=applications)
+    # available_programs=available_programs,
+    return render_template('advisor_dashboard.html', advisor=advisor, applications=applications)
 
 
 @app.route('/advisors/<advisor_id>/dashboard/students')
@@ -657,7 +672,9 @@ def advisor_students(advisor_id):
     if session.get('advisor') != advisor_id:
         flash("Please login as advisor", "warning")
         return redirect(url_for('login_advisor'))
-    return render_template('advisor_students.html')
+
+    advisor = Advisor.query.get_or_404(advisor_id)
+    return render_template('advisor_students.html', advisor=advisor)
 
 
 @app.route('/advisors/<advisor_id>/profile', methods=['GET', 'POST'])
@@ -677,7 +694,7 @@ def advisor_profile(advisor_id):
 
 
 @app.route('/advisors/<string:advisor_id>/apply/<string:program_id>', methods=['POST'])
-def apply_for_program(advisor_id, program_id):
+def offer_assistance(advisor_id, program_id):
     if session.get('advisor') != advisor_id:
         flash("Please login as advisor", "warning")
         return redirect(url_for('login_advisor'))
@@ -741,12 +758,12 @@ def delete_advisor_application(application_id):
     return redirect(url_for('advisor_dashboard', advisor_id=advisor_id))
 
 
-@app.route('/programs/<string:program_id>/offer_assistance')
-def offer_assistance(program_id):
-    # Ensure the advisor remains logged in (session check) if needed.
-    program = Program.query.get_or_404(program_id)
-    # Render a dedicated page or modal to offer assistance.
-    return render_template('offer_assistance.html', program=program)
+# @app.route('/programs/<string:program_id>/offer_assistance')
+# def offer_assistance(program_id):
+#     # Ensure the advisor remains logged in (session check) if needed.
+#     program = Program.query.get_or_404(program_id)
+#     # Render a dedicated page or modal to offer assistance.
+#     return render_template('offer_assistance.html', program=program)
 
 
 @app.route('/error')
