@@ -1,6 +1,6 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block content %}
 <h2>Agency Dashboard - Student Applications</h2>
-<!-- Minimal placeholder for a table listing student applications -->
 <table class="table">
   <thead>
     <tr>
@@ -15,16 +15,30 @@
     </tr>
   </thead>
   <tbody>
+    {% for application in student_applications %}
     <tr>
-      <td>Sample Student</td>
-      <td>Country</td>
-      <td>Country</td>
-      <td>Program X</td>
-      <td>Advisor Name</td>
-      <td>pending</td>
-      <td>2025-01-01</td>
-      <td>2024-12-01</td>
+      <td>{{ application.student.full_name }}</td>
+      <td>{{ application.student.nationality }}</td>
+      <td>{{ application.student.country_of_residence }}</td>
+      <td>{{ application.program.name }}</td>
+      <td>
+        {{ assigned_advisors.get(application.student.id ~ '-' ~ application.program.id, 'N/A') }}
+      </td>
+      <td>{{ application.status }}</td>
+      <td>
+        {% if application.program.deadline %}
+          {{ application.program.deadline.strftime('%Y-%m-%d') }}
+        {% else %}
+          N/A
+        {% endif %}
+      </td>
+      <td>{{ application.created_at.strftime('%Y-%m-%d') }}</td>
     </tr>
+    {% else %}
+    <tr>
+      <td colspan="8">No student applications found.</td>
+    </tr>
+    {% endfor %}
   </tbody>
 </table>
 {% endblock %}

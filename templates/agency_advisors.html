@@ -6,8 +6,7 @@
     <tr>
       <th>Advisor Name</th>
       <th>Country of Residence</th>
-      <th>Program's University</th>
-      <th>Program Name</th>
+      <th>Programs (Title - University)</th>
       <th>Assisted Students</th>
       <th>Actions</th>
     </tr>
@@ -18,51 +17,44 @@
       <td>{{ advisor.full_name }}</td>
       <td>{{ advisor.country_of_residence or "N/A" }}</td>
       <td>
-        {% for program in programs %}
-          {% if program.id == advisor.program_id %}
-            {{ program.university }}
-          {% endif %}
-        {% endfor %}
+        {% if advisor.id in advisor_applications %}
+          {% set programs_list = advisor_applications[advisor.id] | map(attribute='program') | list %}
+          {% for program in programs_list %}
+            {{ program.name }} - {{ program.university }}{% if not loop.last %}, {% endif %}
+          {% endfor %}
+        {% else %}
+          N/A
+        {% endif %}
       </td>
       <td>
-        {% for program in programs %}
-          {% if program.id == advisor.program_id %}
-            {{ program.name }}
-          {% endif %}
-        {% endfor %}
+        <ul class="list-unstyled mb-0">
+          {% for assignment in advisor_assignments %}
+            {% if assignment.advisor_id == advisor.id %}
+              {% for student in available_students %}
+                {% if student.id == assignment.student_id %}
+                  <li class="d-flex align-items-center mb-1">
+                    <span class="mr-2">{{ student.full_name }}</span>
+                    <form method="POST" action="{{ url_for('unassign_student', agency_id=session.get('agency'), advisor_id=advisor.id, student_id=student.id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to remove this student?');">
+                      <button type="submit" class="btn btn-sm btn-danger ml-auto">Remove</button>
+                    </form>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </ul>
       </td>
       <td>
-        <strong>Assigned Students & Programs:</strong><br />
-        {% for assignment in advisor_assignments %}
-          {% if assignment.advisor_id == advisor.id %}
-            {% for student in available_students %}
-              {% if student.id == assignment.student_id %}
-                {{ student.full_name }} -
-                {% for program in programs %}
-                  {% if program.id == student.program_id %}
-                    {{ program.name }} ({{ program.university }})
-                  {% endif %}
-                {% endfor %}
-                <form method="POST" action="{{ url_for('unassign_student', agency_id=session.get('agency'), advisor_id=advisor.id, student_id=student.id) }}" style="display: inline" onsubmit="return confirm('Are you sure you want to remove this student?');">
-                  <button type="submit" class="btn btn-sm btn-danger">Remove</button>
-                </form>
-                <br />
-              {% endif %}
-            {% endfor %}
-          {% endif %}
-        {% endfor %}
-      </td>
-      <td>
-        <!-- Assign Student Button -->
+        <!-- Assign Student Button (opens modal) -->
         <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#assignModal{{ advisor.id }}">Assign Student</button>
-        <!-- Delete Advisor Form -->
-        <form method="POST" action="{{ url_for('delete_advisor', agency_id=session.get('agency'), advisor_id=advisor.id) }}" style="display: inline" onsubmit="return confirm('Are you sure you want to delete this advisor?');">
+        <!-- Delete Advisor Button -->
+        <form method="POST" action="{{ url_for('delete_advisor', agency_id=session.get('agency'), advisor_id=advisor.id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this advisor?');">
           <button type="submit" class="btn btn-sm btn-danger">Delete</button>
         </form>
       </td>
     </tr>
-
-    <!-- Modal for assigning student -->
+    
+    <!-- Modal for assigning a student to this advisor -->
     <div class="modal fade" id="assignModal{{ advisor.id }}" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel{{ advisor.id }}" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -74,13 +66,28 @@
               </button>
             </div>
             <div class="modal-body">
-              <div class="mb-3">
+              <!-- Select Student -->
+              <div class="form-group">
                 <label for="studentSelect{{ advisor.id }}">Select Student</label>
                 <select name="student_id" id="studentSelect{{ advisor.id }}" class="form-control" required>
                   <option value="">Select a Student</option>
                   {% for student in available_students %}
                     <option value="{{ student.id }}">{{ student.full_name }} ({{ student.email }})</option>
                   {% endfor %}
+                </select>
+              </div>
+              <!-- Select Program from advisor's applications -->
+              <div class="form-group">
+                <label for="programSelect{{ advisor.id }}">Select Program</label>
+                <select name="program_id" id="programSelect{{ advisor.id }}" class="form-control" required>
+                  <option value="">Select a Program</option>
+                  {% if advisor.id in advisor_applications %}
+                    {% for app in advisor_applications[advisor.id] %}
+                      <option value="{{ app.program.id }}">{{ app.program.name }} - {{ app.program.university }}</option>
+                    {% endfor %}
+                  {% else %}
+                    <option value="">No programs available</option>
+                  {% endif %}
                 </select>
               </div>
             </div>
@@ -92,6 +99,7 @@
         </div>
       </div>
     </div>
+    
     {% endfor %}
   </tbody>
 </table>

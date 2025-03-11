@@ -78,6 +78,9 @@ class StudentProgram(db.Model):
     # Relationship with the Program model
     program = db.relationship("Program", backref="student_programs")
 
+    # Relationship with the Student model:
+    student = db.relationship("Student", backref="student_programs")
+
 
 class AdvisorAssignment(db.Model):
     __tablename__ = 'advisor_assignments'
@@ -86,9 +89,14 @@ class AdvisorAssignment(db.Model):
         'advisor.id'), nullable=False)
     student_id = db.Column(db.String(36), db.ForeignKey(
         'students.id'), nullable=False)
+    program_id = db.Column(db.String(36), db.ForeignKey('programs.id'), nullable=False)  # New column
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    advisor = db.relationship('Advisor', backref='assignments')
+    student = db.relationship('Student', backref='advisor_assignments')
+    program = db.relationship('Program', backref='advisor_assignments')
 
+    
 class AdvisorApplication(db.Model):
     __tablename__ = 'advisor_applications'
     id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
@@ -98,6 +106,6 @@ class AdvisorApplication(db.Model):
         'programs.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relationships for easier access:
+    # Relationships
     advisor = db.relationship("Advisor", backref="applications")
     program = db.relationship("Program", backref="advisor_applications")

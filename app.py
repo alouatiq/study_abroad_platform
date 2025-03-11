@@ -433,26 +433,73 @@ def agency_students(agency_id):
     if session.get('agency') != agency_id:
         flash("Please login as agency", "warning")
         return redirect(url_for('login_agency'))
-    return render_template('agency_students.html')
+    
+    # Retrieve programs for this agency
+    programs = Program.query.filter_by(agency_id=agency_id).all()
+    program_ids = [p.id for p in programs]
+    
+    # Get student applications for these programs.
+    student_applications = StudentProgram.query.filter(StudentProgram.program_id.in_(program_ids)).all()
+    
+    # Get the student IDs from these applications.
+    student_ids = [app.student_id for app in student_applications]
+    
+    # Retrieve assignments for these students that are also for one of the agency's programs.
+    advisor_assignments = AdvisorAssignment.query.filter(
+        AdvisorAssignment.student_id.in_(student_ids),
+        AdvisorAssignment.program_id.in_(program_ids)
+    ).all()
+    
+    # Build a dictionary mapping "student_id-program_id" to the advisor's full name.
+    assigned_advisors = {}
+    for assignment in advisor_assignments:
+        key = f"{assignment.student_id}-{assignment.program_id}"
+        assigned_advisors[key] = assignment.advisor.full_name
+
+    return render_template(
+        'agency_students.html',
+        student_applications=student_applications,
+        assigned_advisors=assigned_advisors
+    )
 
 
-@app.route('/agencies/<string:agency_id>/dashboard/advisors')
+@app.route('/agencies/<agency_id>/dashboard/advisors')
 def agency_advisors(agency_id):
+    if session.get('agency') != agency_id:
+        flash("Please login as agency", "warning")
+        return redirect(url_for('login_agency'))
+    
     agency = Agency.query.get_or_404(agency_id)
-    advisors = Advisor.query.filter_by(agency_id=agency_id).all()
+    
+    # Retrieve all applications for programs that belong to this agency.
+    applications = AdvisorApplication.query.join(Program).filter(Program.agency_id == agency_id).all()
+    
+    # Build a dictionary mapping advisor_id to a list of their applications.
+    advisor_applications = {}
+    for app in applications:
+        advisor_applications.setdefault(app.advisor_id, []).append(app)
+    
+    # Get the advisors that have at least one application.
+    advisor_ids = list(advisor_applications.keys())
+    advisors = Advisor.query.filter(Advisor.id.in_(advisor_ids)).all()
+    
+    # Also retrieve all programs of the agency for display.
     programs = Program.query.filter_by(agency_id=agency_id).all()
     programs_dict = {p.id: p for p in programs}
-    # You may filter this further if needed.
+    
+    # Optionally, retrieve advisor assignments and available students if you want to display assisted students.
     advisor_assignments = AdvisorAssignment.query.all()
-    # Optionally, filter out already assigned students.
     available_students = Student.query.all()
+
     return render_template('agency_advisors.html',
                            agency=agency,
                            advisors=advisors,
                            programs=programs,
                            programs_dict=programs_dict,
+                           advisor_applications=advisor_applications,
                            advisor_assignments=advisor_assignments,
                            available_students=available_students)
+
 
 
 @app.route('/agencies/<agency_id>/dashboard/advisors/<advisor_id>/unassign/<student_id>', methods=['POST'])
@@ -478,25 +525,46 @@ def assign_advisor(agency_id, advisor_id):
     if session.get('agency') != agency_id:
         flash("Please login as agency", "warning")
         return redirect(url_for('login_agency'))
+    
     student_id = request.form.get('student_id')
-    if not student_id:
-        flash("No student selected", "danger")
+    program_id = request.form.get('program_id')
+    
+    if not student_id or not program_id:
+        flash("Please select both a student and a program.", "danger")
         return redirect(url_for('agency_advisors', agency_id=agency_id))
-    # Check if the student is already assigned
+    
+    # Verify that the selected student has applied for the chosen program.
+    student_application = StudentProgram.query.filter_by(
+        student_id=student_id,
+        program_id=program_id
+    ).first()
+    
+    if not student_application:
+        flash("The selected student has not applied for the chosen program.", "danger")
+        return redirect(url_for('agency_advisors', agency_id=agency_id))
+    
+    # Optionally, check if an assignment already exists for this student and program.
     existing_assignment = AdvisorAssignment.query.filter_by(
-        student_id=student_id).first()
+        student_id=student_id,
+        program_id=program_id
+    ).first()
     if existing_assignment:
-        flash("This student is already assigned to an advisor.", "warning")
+        flash("This student is already assigned for this program.", "warning")
         return redirect(url_for('agency_advisors', agency_id=agency_id))
+    
     new_assignment = AdvisorAssignment(
         id=generate_uuid(),
         advisor_id=advisor_id,
-        student_id=student_id
+        student_id=student_id,
+        program_id=program_id,
+        created_at=datetime.utcnow()
     )
     db.session.add(new_assignment)
     db.session.commit()
+    
     flash("Student assigned successfully", "success")
     return redirect(url_for('agency_advisors', agency_id=agency_id))
+
 
 
 @app.route('/agencies/<agency_id>/profile', methods=['GET', 'POST'])
