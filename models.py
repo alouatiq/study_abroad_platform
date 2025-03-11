@@ -52,10 +52,10 @@ class Program(db.Model):
 class Advisor(db.Model):
     __tablename__ = 'advisor'
     id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
-    agency_id = db.Column(db.String(36), db.ForeignKey(
-        'agencies.id'))  # , nullable=False
-    program_id = db.Column(db.String(36), db.ForeignKey(
-        'programs.id'))  # , nullable=False
+    # agency_id = db.Column(db.String(36), db.ForeignKey(
+    #     'agencies.id'))  # , nullable=False
+    # program_id = db.Column(db.String(36), db.ForeignKey(
+    #     'programs.id'))  # , nullable=False
     full_name = db.Column(db.String(255), nullable=False)
     password = db.Column(db.String(255))
     email = db.Column(db.String(255), unique=True, nullable=False)
@@ -78,9 +78,6 @@ class StudentProgram(db.Model):
     # Relationship with the Program model
     program = db.relationship("Program", backref="student_programs")
 
-    # Relationship with the Student model:
-    student = db.relationship("Student", backref="student_programs")
-
 
 class AdvisorAssignment(db.Model):
     __tablename__ = 'advisor_assignments'
@@ -89,14 +86,9 @@ class AdvisorAssignment(db.Model):
         'advisor.id'), nullable=False)
     student_id = db.Column(db.String(36), db.ForeignKey(
         'students.id'), nullable=False)
-    program_id = db.Column(db.String(36), db.ForeignKey('programs.id'), nullable=False)  # New column
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    advisor = db.relationship('Advisor', backref='assignments')
-    student = db.relationship('Student', backref='advisor_assignments')
-    program = db.relationship('Program', backref='advisor_assignments')
 
-    
 class AdvisorApplication(db.Model):
     __tablename__ = 'advisor_applications'
     id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
@@ -104,8 +96,9 @@ class AdvisorApplication(db.Model):
         'advisor.id'), nullable=False)
     program_id = db.Column(db.String(36), db.ForeignKey(
         'programs.id'), nullable=False)
+    assistance_approval = db.Column(db.Boolean(), default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relationships
+    # Relationships for easier access:
     advisor = db.relationship("Advisor", backref="applications")
     program = db.relationship("Program", backref="advisor_applications")
