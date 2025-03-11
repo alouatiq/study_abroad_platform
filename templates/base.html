@@ -62,7 +62,7 @@
             </li>
           {% elif 'advisor' in session %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('advisor_dashboard', advisor_id=session['advisor']) }}">Programs</a>
+              <a class="nav-link" href="{{ url_for('advisor_dashboard', advisor_id=session['advisor']) }}">Dashboard</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('advisor_students', advisor_id=session['advisor']) }}">Assigned Students</a>
