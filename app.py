@@ -351,15 +351,24 @@ def edit_program(program_id):
 
 @app.route('/programs/<string:program_id>/delete', methods=['POST'])
 def delete_program(program_id):
+
+    print(f"program_id ={program_id}")
+    # Delete the Program id in the advisor_application table
+    advisors_applis = AdvisorApplication.query.filter_by(
+        program_id=program_id).all()
+
+    [db.session.delete(item) for item in advisors_applis]
+    # Delete the Program id in the  advisor_assignments table
+    assignments = AdvisorAssignment.query.filter_by(program_id=program_id)
+    [db.session.delete(item) for item in assignments]
+    # Delete the Program id in the student_programs table
+    students_applis = StudentProgram.query.filter_by(program_id=program_id)
+    [db.session.delete(item) for item in students_applis]
+
     # Delete the Programe from program tables
     program = Program.query.get_or_404(program_id)
     agency_id = program.agency_id
     db.session.delete(program)
-    # Delete the Program id in the advisor_application table
-
-    # Delete the Program id in the advisor_assignments table
-
-    # Delete the Program id in the student_programs table
 
     db.session.commit()
     flash("Program deleted successfully", "success")
@@ -528,8 +537,8 @@ def assign_advisor_to_student(agency_id, application_id):
 
     existing_assignment = AdvisorAssignment.query.filter_by(
         student_id=application.student_id, program_id=application.program_id).first()
-    print(f"existing_assignment.student_id= {existing_assignment.student_id}")
-    print(f"existing_assignment.program_id = {existing_assignment.program_id}")
+    # print(f"existing_assignment.student_id= {existing_assignment.student_id}")
+    # print(f"existing_assignment.program_id = {existing_assignment.program_id}")
     print(f"")
     if existing_assignment:
         flash("The assigned advisor has changed!", "warning")
