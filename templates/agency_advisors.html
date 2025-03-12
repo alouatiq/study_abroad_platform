@@ -1,5 +1,20 @@
 {% extends "base.html" %} {% block content %}
-<h2>Agency Dashboard - Advisors</h2>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Advisors assistance offers</h2>
+  <div>
+    <a
+      href="{{ url_for('agency_dashboard', agency_id=agency_id) }}"
+      class="btn btn-primary me-2"
+      >Manage Programs</a
+    >
+    <a
+      href="{{ url_for('agency_students', agency_id=agency_id) }}"
+      class="btn btn-primary"
+      >Manage Students</a
+    >
+  </div>
+</div>
 <table class="table">
   <thead>
     <tr>
@@ -21,18 +36,98 @@
       <td>{{advisor_proposal['assistance status']}}</td>
       <td>
         <button
+          class="btn btn-sm btn-info"
+          data-toggle="modal"
+          data-target="#assignModal{{ advisor_proposal['id'] }}"
+        >
+          Edit
+        </button>
+        <!-- <button
           type="button"
           class="btn btn-primary"
           data-toggle="modal"
           data-target="#exampleModal"
         >
           Open modal for @mdo
-        </button>
+        </button> -->
       </td>
     </tr>
 
     <!-- Modal for assigning student -->
     <div
+      class="modal fade"
+      id="assignModal{{ advisor_proposal['id'] }}"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="assignModalLabel{{ advisor_proposal['id'] }}"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form
+            method="POST"
+            action="{{ url_for('agency_advisors', agency_id=agency_id) }}"
+          >
+            <div class="modal-header">
+              <h5
+                class="modal-title"
+                id="assignModalLabel{{ advisor_proposal['id'] }}"
+              >
+                Assistance Status
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- Select Student -->
+              <div class="form-group">
+                <input
+                  type="hidden"
+                  name="appli_id"
+                  value="{{ advisor_proposal['id'] }}"
+                />
+                <label for="studentSelect{{ advisor_proposal['id'] }}"
+                  >Change Assistance Status</label
+                >
+                <select
+                  name="assistance_approval"
+                  id="studentSelect{{ advisor_proposal['id'] }}"
+                  class="form-control"
+                  required
+                >
+                  {% if advisor_proposal['assistance status']== "Approved" %}
+
+                  <option value="1" selected>Approved</option>
+                  <option value="0">Rejected</option>
+                  {% else %}
+                  <option value="1">Approved</option>
+                  <option value="0" selected>Rejected</option>
+                  {% endif %}
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">Assign</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div
       class="modal fade"
       id="exampleModal"
       tabindex="-1"
@@ -45,7 +140,6 @@
             <h1
               class="modal-title fs-5"
               id="exampleModalLabel"
-              data--h-bstatus="0OBSERVED"
             >
               New message to @mdo
             </h1>
@@ -54,7 +148,6 @@
               class="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
-              data--h-bstatus="0OBSERVED"
             ></button>
           </div>
           <div class="modal-body" data--h-bstatus="0OBSERVED">
@@ -107,7 +200,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     {% else %}
     <tr>

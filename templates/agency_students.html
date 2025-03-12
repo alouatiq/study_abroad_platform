@@ -1,30 +1,99 @@
 {% extends "base.html" %} {% block content %}
-<h2>Agency Dashboard - Student Applications</h2>
-<!-- Minimal placeholder for a table listing student applications -->
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Student Applications</h2>
+  <div>
+    <a href="{{ url_for('agency_dashboard', agency_id=agency_id) }}" class="btn btn-primary me-2">Manage Programs</a>
+    <a href="{{ url_for('agency_advisors', agency_id=agency_id) }}" class="btn btn-primary">Manage Advisors</a>
+  </div>
+</div>
+
 <table class="table">
   <thead>
     <tr>
       <th>Student Name</th>
       <th>Nationality</th>
-      <th>Country of Residence</th>
       <th>Program Name</th>
+      <th>University</th>
       <th>Assigned Advisor</th>
       <th>Status</th>
-      <th>Deadline</th>
-      <th>Application Date</th>
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
+    {% for application in student_applications %}
     <tr>
-      <td>Sample Student</td>
-      <td>Country</td>
-      <td>Country</td>
-      <td>Program X</td>
-      <td>Advisor Name</td>
-      <td>pending</td>
-      <td>2025-01-01</td>
-      <td>2024-12-01</td>
+      <td>{{ application.full_name }}</td>
+      <td>{{ application.nationality }}</td>
+      <td>{{ application.name }}</td>
+      <td>{{ application.university }}</td>
+      <td>
+        {% if application.advisor_assignments %}
+          {{ application.advisor_assignments[0].advisor.full_name }}
+        {% else %}
+          None
+        {% endif %}
+      </td>
+      <td>{{ application.status }}</td>
+      <td>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editStatusModal{{ application.id }}">Edit</button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assignAdvisorModal{{ application.id }}">Assign Advisor</button>
+      </td>
     </tr>
+
+    <!-- Edit Status Modal -->
+    <div class="modal fade" id="editStatusModal{{ application.id }}" tabindex="-1" aria-labelledby="editStatusModalLabel{{ application.id }}" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editStatusModalLabel{{ application.id }}">Edit Application Status</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="{{ url_for('update_application_status', agency_id=agency_id, application_id=application.id) }}" method="post">
+              <div class="mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" name="status" id="status">
+                  <option value="pending" {% if application.status == 'pending' %}selected{% endif %}>Pending</option>
+                  <option value="complete" {% if application.status == 'complete' %}selected{% endif %}>Complete</option>
+                  <option value="rejected" {% if application.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assign Advisor Modal -->
+    <div class="modal fade" id="assignAdvisorModal{{ application.id }}" tabindex="-1" aria-labelledby="assignAdvisorModalLabel{{ application.id }}" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="assignAdvisorModalLabel{{ application.id }}">Assign Advisor</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="{{ url_for('assign_advisor_to_student', agency_id=agency_id, application_id=application.id) }}" method="post">
+              <div class="mb-3">
+                <label for="advisor_id" class="form-label">Advisor</label>
+                <select class="form-select" name="advisor_id" id="advisor_id">
+                  {% for advisor in advisors %}
+                    {% if advisor.program_id == application.program_id %}
+                      <option value="{{ advisor.advisor_id }}">{{ advisor.advisor.full_name }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Assign Advisor</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
   </tbody>
 </table>
+
 {% endblock %}
