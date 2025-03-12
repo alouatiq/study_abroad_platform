@@ -351,9 +351,16 @@ def edit_program(program_id):
 
 @app.route('/programs/<string:program_id>/delete', methods=['POST'])
 def delete_program(program_id):
+    # Delete the Programe from program tables
     program = Program.query.get_or_404(program_id)
     agency_id = program.agency_id
     db.session.delete(program)
+    # Delete the Program id in the advisor_application table
+
+    # Delete the Program id in the advisor_assignments table
+
+    # Delete the Program id in the student_programs table
+
     db.session.commit()
     flash("Program deleted successfully", "success")
     return redirect(url_for('agency_dashboard', agency_id=agency_id))
@@ -422,17 +429,6 @@ def agency_dashboard(agency_id):
 
     return render_template(
         'agency_dashboard.html', agency=agency, programs=programs)
-# advisors=advisors,
-#         available_students=available_students,
-#         advisor_assignments=advisor_assignments  # Pass this to template
-
-
-# @app.route('/agencies/<agency_id>/dashboard/students')
-# def agency_students(agency_id):
-#     if session.get('agency') != agency_id:
-#         flash("Please login as agency", "warning")
-#         return redirect(url_for('login_agency'))
-#     return render_template('agency_students.html', agency_id=agency_id)
 
 
 @app.route('/agencies/<agency_id>/dashboard/students')
@@ -449,17 +445,59 @@ def agency_students(agency_id):
         Program, StudentProgram.program_id == Program.id).filter(Program.agency_id == agency_id).all()
 
     # Fetch all advisors who have offered assistance to these programs
-    advisors = AdvisorApplication.query.join(Program, AdvisorApplication.program_id == Program.id).filter(
+    advisor_applications = AdvisorApplication.query.join(Program, AdvisorApplication.program_id == Program.id).filter(
         Program.agency_id == agency_id, AdvisorApplication.assistance_approval == True).all()
 
-    for application in student_applications:
-        print(f"application = {application}")
-        print(f"dir(application) = {application}")
-        print(f"application. = {application.full_name}")
+    # Get approved advisor for certain program to assist certain student
+    assigned_advisors = AdvisorAssignment.query.join(
+        Advisor, AdvisorAssignment.advisor_id == Advisor.id).all()
 
-        print(f"****************************************************")
+    for assignment in assigned_advisors:
+        print(
+            f"assignment.student.id = {assignment.student.id}")
+        print(
+            f"assignment.program_id = {assignment.program_id}")
+        print("*******************************************")
+    # Get approved advisor assignments with a single query - joining the necessary tables
+    # This query gets all assignments where the advisor has approved assistance for the program
+    # approved_assignments = db.session.query(
+    #     AdvisorAssignment, Advisor
+    # ).join(
+    #     Advisor, AdvisorAssignment.advisor_id == Advisor.id
+    # ).join(
+    #     AdvisorApplication,
+    #     (AdvisorApplication.advisor_id == AdvisorAssignment.advisor_id) &
+    #     (AdvisorApplication.assistance_approval == True)
+    # ).all()
+    # print(f"approved_assignments = {approved_assignments}")
+    # # Get all advisors who are approved to assist on specific program
+    # approved_programs = db.session.query(AdvisorApplication, Advisor).join(
+    #     AdvisorApplication,
+    #     (AdvisorApplication.advisor_id == Advisor.id) &
+    #     (AdvisorApplication.assistance_approval == True)
+    # ).all()
 
-    return render_template('agency_students.html', agency_id=agency_id, programs=programs, student_applications=student_applications, advisors=advisors)
+    # # Create a dictionary mapping student_id to advisor name for easy lookup
+    # student_advisor_map = {}
+    # for assignment, advisor in approved_assignments:
+    #     print(f"assignment = {assignment}")
+    #     print(f"advisor = {advisor}")
+    #     student_advisor_map[assignment.student_id] = advisor.full_name
+    #     print("**********************************************")
+
+    # print(f"approved_programs = {approved_programs}")
+    # # Create a dictionary mapping program_id to advisor name for easy lookup
+    # program_advisor_map = {}
+    # for program, advisor in approved_programs:
+    #     print(f"program = {program}")
+    #     print(f"advisor = {advisor}")
+    #     program_advisor_map[program.program_id] = advisor.full_name
+    #     print("**********************************************")
+
+    return render_template('agency_students.html', agency_id=agency_id, programs=programs,
+                           student_applications=student_applications,
+                           advisors=advisor_applications,
+                           assigned_advisors=assigned_advisors)
 
 
 @app.route('/agencies/<agency_id>/dashboard/students/update_status/<application_id>', methods=['POST'])
@@ -489,19 +527,25 @@ def assign_advisor_to_student(agency_id, application_id):
         return redirect(url_for('agency_students', agency_id=agency_id))
 
     existing_assignment = AdvisorAssignment.query.filter_by(
-        student_id=application.student_id).first()
+        student_id=application.student_id, program_id=application.program_id).first()
+    print(f"existing_assignment.student_id= {existing_assignment.student_id}")
+    print(f"existing_assignment.program_id = {existing_assignment.program_id}")
+    print(f"")
     if existing_assignment:
-        flash("This student is already assigned to an advisor.", "warning")
+        flash("The assigned advisor has changed!", "warning")
+        existing_assignment.advisor_id = advisor_id
+        db.session.commit()
         return redirect(url_for('agency_students', agency_id=agency_id))
 
     new_assignment = AdvisorAssignment(
         id=generate_uuid(),
         advisor_id=advisor_id,
-        student_id=application.student_id
+        student_id=application.student_id,
+        program_id=application.program_id
     )
     db.session.add(new_assignment)
     db.session.commit()
-    flash("Advisor assigned successfully", "success")
+    flash("A new advisor is assigned successfully", "success")
     return redirect(url_for('agency_students', agency_id=agency_id))
 
 

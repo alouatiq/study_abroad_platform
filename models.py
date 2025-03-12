@@ -75,6 +75,8 @@ class StudentProgram(db.Model):
     status = db.Column(db.String(50), default="pending")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Relationship with the Student model
+    student = db.relationship("Student", backref="student_programs")
     # Relationship with the Program model
     program = db.relationship("Program", backref="student_programs")
 
@@ -86,7 +88,12 @@ class AdvisorAssignment(db.Model):
         'advisor.id'), nullable=False)
     student_id = db.Column(db.String(36), db.ForeignKey(
         'students.id'), nullable=False)
+    program_id = db.Column(db.String(36), db.ForeignKey(
+        'programs.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # Relationships for easier access:
+    advisor = db.relationship("Advisor", backref="advisor_assignments")
+    student = db.relationship("Student", backref="advisor_assignments")
 
 
 class AdvisorApplication(db.Model):
@@ -100,5 +107,5 @@ class AdvisorApplication(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships for easier access:
-    advisor = db.relationship("Advisor", backref="applications")
+    advisor = db.relationship("Advisor", backref="advisor_applications")
     program = db.relationship("Program", backref="advisor_applications")
