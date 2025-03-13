@@ -243,18 +243,6 @@ def delete_application(id):
     return redirect(url_for('student_dashboard', student_id=student_id))
 
 
-# @app.route('/students/<student_id>/dashboard/documents', methods=['GET', 'POST'])
-# def student_documents(student_id):
-#     if not is_logged_in('student', student_id):
-#         flash("Please login to access your documents", "warning")
-#         return redirect(url_for('login_student', program_id=0))
-#     if request.method == 'POST':
-#         # File handling logic here
-
-#         flash("Documents updated", "success")
-#         return redirect(url_for('student_documents', student_id=student_id))
-#     return render_template('student_documents.html')
-
 @app.route('/students/<student_id>/dashboard/documents', methods=['GET', 'POST'])
 def student_documents(student_id):
     if not is_logged_in('student', student_id):
@@ -432,9 +420,6 @@ def agency_dashboard(agency_id):
 
     agency = Agency.query.get_or_404(agency_id)
     programs = Program.query.filter_by(agency_id=agency_id).all()
-    # advisors = Advisor.query.filter_by(agency_id=agency_id).all()
-    # advisor_assignments = AdvisorAssignment.query.all()  # Fetch all assignments
-    # available_students = Student.query.all()  # Ideally, filter unassigned students
 
     return render_template(
         'agency_dashboard.html', agency=agency, programs=programs)
@@ -460,48 +445,6 @@ def agency_students(agency_id):
     # Get approved advisor for certain program to assist certain student
     assigned_advisors = AdvisorAssignment.query.join(
         Advisor, AdvisorAssignment.advisor_id == Advisor.id).all()
-
-    for assignment in assigned_advisors:
-        print(
-            f"assignment.student.id = {assignment.student.id}")
-        print(
-            f"assignment.program_id = {assignment.program_id}")
-        print("*******************************************")
-    # Get approved advisor assignments with a single query - joining the necessary tables
-    # This query gets all assignments where the advisor has approved assistance for the program
-    # approved_assignments = db.session.query(
-    #     AdvisorAssignment, Advisor
-    # ).join(
-    #     Advisor, AdvisorAssignment.advisor_id == Advisor.id
-    # ).join(
-    #     AdvisorApplication,
-    #     (AdvisorApplication.advisor_id == AdvisorAssignment.advisor_id) &
-    #     (AdvisorApplication.assistance_approval == True)
-    # ).all()
-    # print(f"approved_assignments = {approved_assignments}")
-    # # Get all advisors who are approved to assist on specific program
-    # approved_programs = db.session.query(AdvisorApplication, Advisor).join(
-    #     AdvisorApplication,
-    #     (AdvisorApplication.advisor_id == Advisor.id) &
-    #     (AdvisorApplication.assistance_approval == True)
-    # ).all()
-
-    # # Create a dictionary mapping student_id to advisor name for easy lookup
-    # student_advisor_map = {}
-    # for assignment, advisor in approved_assignments:
-    #     print(f"assignment = {assignment}")
-    #     print(f"advisor = {advisor}")
-    #     student_advisor_map[assignment.student_id] = advisor.full_name
-    #     print("**********************************************")
-
-    # print(f"approved_programs = {approved_programs}")
-    # # Create a dictionary mapping program_id to advisor name for easy lookup
-    # program_advisor_map = {}
-    # for program, advisor in approved_programs:
-    #     print(f"program = {program}")
-    #     print(f"advisor = {advisor}")
-    #     program_advisor_map[program.program_id] = advisor.full_name
-    #     print("**********************************************")
 
     return render_template('agency_students.html', agency_id=agency_id, programs=programs,
                            student_applications=student_applications,
@@ -537,9 +480,7 @@ def assign_advisor_to_student(agency_id, application_id):
 
     existing_assignment = AdvisorAssignment.query.filter_by(
         student_id=application.student_id, program_id=application.program_id).first()
-    # print(f"existing_assignment.student_id= {existing_assignment.student_id}")
-    # print(f"existing_assignment.program_id = {existing_assignment.program_id}")
-    print(f"")
+
     if existing_assignment:
         flash("The assigned advisor has changed!", "warning")
         existing_assignment.advisor_id = advisor_id
