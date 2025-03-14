@@ -48,6 +48,8 @@ class Program(db.Model):
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    agency = db.relationship('Agency', backref='programs', lazy=True)
+
 
 class Advisor(db.Model):
     __tablename__ = 'advisor'
@@ -61,7 +63,6 @@ class Advisor(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     phone_number = db.Column(db.String(50))
     country_of_residence = db.Column(db.String(100))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class StudentProgram(db.Model):
@@ -94,6 +95,8 @@ class AdvisorAssignment(db.Model):
     # Relationships for easier access:
     advisor = db.relationship("Advisor", backref="advisor_assignments")
     student = db.relationship("Student", backref="advisor_assignments")
+    program = db.relationship("Program", backref="advisor_assignments")
+
 
 
 class AdvisorApplication(db.Model):

@@ -8,6 +8,7 @@ import os
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import StudentRegistrationForm, StudentLoginForm, AgencyRegistrationForm, AgencyLoginForm, AdvisorRegistrationForm, AdvisorLoginForm
+from sqlalchemy import and_
 
 # Import the db from the extensions module
 from extensions import db
@@ -119,6 +120,73 @@ def api_advisors():
             'program_university': program_university,
             'program_name': program_name_val,
             'assisted_students': assisted_students,
+        })
+    return jsonify(data)
+
+@app.route('/api/advisor_students')
+def api_advisor_students():
+    advisor_id = request.args.get('advisor_id')
+    program_filter = request.args.get('program', '').strip()
+    status_filter = request.args.get('status', '').strip()
+    student_nationality = request.args.get('student_nationality', '').strip()
+    student_country = request.args.get('student_country', '').strip()
+
+    # Base query: filter assignments for the given advisor
+    query = AdvisorAssignment.query.filter_by(advisor_id=advisor_id)
+    
+    # Join with Student and Program to enable filtering on those fields.
+    query = query.join(Student, AdvisorAssignment.student_id == Student.id)
+    query = query.join(Program, AdvisorAssignment.program_id == Program.id)
+    
+    # Outer join with StudentProgram to get status and application date (if available).
+    query = query.outerjoin(StudentProgram, 
+             and_(StudentProgram.student_id == AdvisorAssignment.student_id,
+                  StudentProgram.program_id == AdvisorAssignment.program_id))
+    
+    # Apply filters if the corresponding parameter is provided.
+    if program_filter:
+        query = query.filter(Program.name.ilike(f"%{program_filter}%"))
+    if status_filter:
+        query = query.filter(StudentProgram.status.ilike(f"%{status_filter}%"))
+    if student_nationality:
+        query = query.filter(Student.nationality.ilike(f"%{student_nationality}%"))
+    if student_country:
+        query = query.filter(Student.country_of_residence.ilike(f"%{student_country}%"))
+    
+    assignments = query.all()
+
+    data = []
+    for a in assignments:
+        student = a.student
+        program_obj = a.program
+        # Get status and application date from StudentProgram if exists.
+        student_program = StudentProgram.query.filter_by(
+            student_id=a.student_id, 
+            program_id=a.program_id
+        ).first()
+        status_value = student_program.status if student_program else "N/A"
+        application_date = (student_program.created_at.strftime('%Y-%m-%d')
+                            if student_program and student_program.created_at else None)
+        deadline = (program_obj.deadline.strftime('%Y-%m-%d')
+                    if program_obj.deadline else "N/A")
+        data.append({
+            "student": {
+                "full_name": student.full_name,
+                "nationality": student.nationality,
+                "country_of_residence": student.country_of_residence
+            },
+            "program": {
+                "id": program_obj.id,
+                "name": program_obj.name,
+                "university": program_obj.university,
+                "field": program_obj.field,
+                "country": program_obj.country,
+                "deadline": deadline,
+                "description": program_obj.description,
+                "agency": {"name": program_obj.agency.name} if program_obj.agency else None
+            },
+            "status": status_value,
+            "application_date": application_date
         })
     return jsonify(data)
 
@@ -779,7 +847,19 @@ def advisor_students(advisor_id):
         return redirect(url_for('login_advisor'))
 
     advisor = Advisor.query.get_or_404(advisor_id)
-    return render_template('advisor_students.html', advisor=advisor)
+    assignments = AdvisorAssignment.query.filter_by(advisor_id=advisor_id).all()
+    for assignment in assignments:
+        student_program = StudentProgram.query.filter_by(
+            student_id=assignment.student_id,
+            program_id=assignment.program_id
+        ).first()
+        if student_program:
+            assignment.status = student_program.status
+            assignment.application_date = student_program.created_at
+        else:
+            assignment.status = "N/A"
+            assignment.application_date = None
+    return render_template('advisor_students.html', advisor=advisor, assignments=assignments)
 
 
 @app.route('/advisors/<advisor_id>/profile', methods=['GET', 'POST'])

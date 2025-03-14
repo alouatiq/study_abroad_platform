@@ -1,8 +1,31 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block content %}
 <h2>Assigned Students</h2>
 <p>Welcome, {{ advisor.full_name }}!</p>
-<!-- Placeholder for a table of students assigned to the advisor -->
-<table class="table">
+
+<!-- Filter Section -->
+<div class="row mb-3">
+  <div class="col-md-3">
+    <input type="text" id="filter-program" class="form-control" placeholder="Program Name">
+  </div>
+  <div class="col-md-3">
+    <select id="filter-status" class="form-control">
+      <option value="">All Status</option>
+      <option value="pending">Pending</option>
+      <option value="complete">Complete</option>
+      <option value="rejected">Rejected</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <input type="text" id="filter-nationality" class="form-control" placeholder="Student Nationality">
+  </div>
+  <div class="col-md-3">
+    <input type="text" id="filter-country" class="form-control" placeholder="Country of Residence">
+  </div>
+</div>
+
+<!-- Students Table -->
+<table class="table table-striped" id="studentsTable">
   <thead>
     <tr>
       <th>Student Name</th>
@@ -16,16 +39,162 @@
     </tr>
   </thead>
   <tbody>
+    {% for assignment in assignments %}
     <tr>
-      <td>Sample Student</td>
-      <td>Country</td>
-      <td>Country</td>
-      <td>Program X</td>
-      <td>Agency</td>
-      <td>pending</td>
-      <td>2025-01-01</td>
-      <td>2024-12-01</td>
+      <td>{{ assignment.student.full_name }}</td>
+      <td>{{ assignment.student.nationality }}</td>
+      <td>{{ assignment.student.country_of_residence }}</td>
+      <td>
+        <a href="#" class="clickable-program"
+           data-program-id="{{ assignment.program.id }}"
+           data-program-name="{{ assignment.program.name }}"
+           data-university="{{ assignment.program.university }}"
+           data-field="{{ assignment.program.field }}"
+           data-country="{{ assignment.program.country }}"
+           data-deadline="{% if assignment.program.deadline %}{{ assignment.program.deadline.strftime('%Y-%m-%d') }}{% else %}N/A{% endif %}"
+           data-description="{{ assignment.program.description }}">
+          {{ assignment.program.name }}
+        </a>
+      </td>
+      <td>{{ assignment.program.agency.name if assignment.program.agency else 'N/A' }}</td>
+      <td>{{ assignment.status }}</td>
+      <td>
+        {% if assignment.program.deadline %}
+          {{ assignment.program.deadline.strftime('%Y-%m-%d') }}
+        {% else %}
+          N/A
+        {% endif %}
+      </td>
+      <td>
+        {% if assignment.application_date %}
+          {{ assignment.application_date.strftime('%Y-%m-%d') }}
+        {% else %}
+          N/A
+        {% endif %}
+      </td>
     </tr>
+    {% else %}
+    <tr>
+      <td colspan="8">No students assigned yet.</td>
+    </tr>
+    {% endfor %}
   </tbody>
 </table>
+
+<!-- Program Details Modal -->
+<div class="modal fade" id="programDetailsModal" tabindex="-1" role="dialog" aria-labelledby="programDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="programDetailsModalLabel">Program Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Name:</strong> <span id="modalProgramName"></span></p>
+        <p><strong>University:</strong> <span id="modalUniversity"></span></p>
+        <p><strong>Field:</strong> <span id="modalField"></span></p>
+        <p><strong>Country:</strong> <span id="modalCountry"></span></p>
+        <p><strong>Deadline:</strong> <span id="modalDeadline"></span></p>
+        <p><strong>Description:</strong> <span id="modalDescription"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function applyFilter() {
+  // Get filter values.
+  const program = document.getElementById('filter-program').value.trim();
+  const status = document.getElementById('filter-status').value.trim();
+  const nationality = document.getElementById('filter-nationality').value.trim();
+  const country = document.getElementById('filter-country').value.trim();
+
+  // Build query parameters: add only non-empty values.
+  const params = new URLSearchParams();
+  params.append("advisor_id", "{{ advisor.id }}");
+  if (program !== "") { params.append("program", program); }
+  if (status !== "") { params.append("status", status); }
+  if (nationality !== "") { params.append("student_nationality", nationality); }
+  if (country !== "") { params.append("student_country", country); }
+
+  fetch(`/api/advisor_students?${params.toString()}`)
+    .then(response => response.json())
+    .then(data => {
+      const tbody = document.querySelector('#studentsTable tbody');
+      tbody.innerHTML = ''; // Clear existing rows
+      
+      if (data.length > 0) {
+        data.forEach(assignment => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${assignment.student.full_name}</td>
+            <td>${assignment.student.nationality}</td>
+            <td>${assignment.student.country_of_residence}</td>
+            <td>
+              <a href="#" class="clickable-program"
+                data-program-id="${assignment.program.id}"
+                data-program-name="${assignment.program.name}"
+                data-university="${assignment.program.university}"
+                data-field="${assignment.program.field}"
+                data-country="${assignment.program.country}"
+                data-deadline="${assignment.program.deadline ? assignment.program.deadline : 'N/A'}"
+                data-description="${assignment.program.description ? assignment.program.description : ''}">
+                ${assignment.program.name}
+              </a>
+            </td>
+            <td>${assignment.program.agency ? assignment.program.agency.name : 'N/A'}</td>
+            <td>${assignment.status}</td>
+            <td>${assignment.program.deadline ? assignment.program.deadline : 'N/A'}</td>
+            <td>${assignment.application_date ? assignment.application_date : 'N/A'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+        // Reattach modal click listeners
+        document.querySelectorAll('.clickable-program').forEach(function(element) {
+          element.addEventListener('click', function(e) {
+            e.preventDefault();
+            const programName = this.getAttribute('data-program-name');
+            const university = this.getAttribute('data-university');
+            const field = this.getAttribute('data-field');
+            const country = this.getAttribute('data-country');
+            const deadline = this.getAttribute('data-deadline') || 'N/A';
+            const description = this.getAttribute('data-description') || 'No description available';
+            document.getElementById('modalProgramName').textContent = programName;
+            document.getElementById('modalUniversity').textContent = university;
+            document.getElementById('modalField').textContent = field;
+            document.getElementById('modalCountry').textContent = country;
+            document.getElementById('modalDeadline').textContent = deadline;
+            document.getElementById('modalDescription').textContent = description;
+            $('#programDetailsModal').modal('show');
+          });
+        });
+      } else {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="8">No students found for the applied filters.</td>';
+        tbody.appendChild(tr);
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching filtered data:', error);
+    });
+}
+
+// Attach event listeners to filter fields for live filtering.
+document.getElementById('filter-program').addEventListener('input', applyFilter);
+document.getElementById('filter-status').addEventListener('change', applyFilter);
+document.getElementById('filter-nationality').addEventListener('input', applyFilter);
+document.getElementById('filter-country').addEventListener('input', applyFilter);
+
+// Optionally, trigger filtering on page load.
+document.addEventListener('DOMContentLoaded', function() {
+  applyFilter();
+});
+</script>
 {% endblock %}
