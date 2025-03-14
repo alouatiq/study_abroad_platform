@@ -105,7 +105,8 @@ class AdvisorApplication(db.Model):
         'programs.id'), nullable=False)
     assistance_approval = db.Column(db.Boolean(), default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
+    
     # Relationships for easier access:
     advisor = db.relationship("Advisor", backref="advisor_applications")
     program = db.relationship("Program", backref="advisor_applications")
+
