@@ -11,8 +11,8 @@
   <div class="col-md-3">
     <select id="filter-status" class="form-control">
       <option value="">All Status</option>
-      <option value="pending">Pending</option>
       <option value="complete">Complete</option>
+      <option value="pending">Pending</option>
       <option value="rejected">Rejected</option>
     </select>
   </div>
@@ -57,7 +57,9 @@
         </a>
       </td>
       <td>{{ assignment.program.agency.name if assignment.program.agency else 'N/A' }}</td>
-      <td>{{ assignment.status }}</td>
+      <td>
+          {{ assignment.status }}
+      </td>
       <td>
         {% if assignment.program.deadline %}
           {{ assignment.program.deadline.strftime('%Y-%m-%d') }}
@@ -132,6 +134,19 @@ function applyFilter() {
       
       if (data.length > 0) {
         data.forEach(assignment => {
+          // Create the badge HTML for status based on the assignment value.
+          let statusHTML = '';
+          const st = assignment.status.toLowerCase();
+          if(st === 'complete') {
+            statusHTML = '<span class="badge badge-success">Complete</span>';
+          } else if(st === 'rejected') {
+            statusHTML = '<span class="badge badge-danger">Rejected</span>';
+          } else if(st === 'pending') {
+            statusHTML = '<span class="badge badge-warning">Pending</span>';
+          } else {
+            statusHTML = assignment.status;
+          }
+
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>${assignment.student.full_name}</td>
@@ -150,13 +165,13 @@ function applyFilter() {
               </a>
             </td>
             <td>${assignment.program.agency ? assignment.program.agency.name : 'N/A'}</td>
-            <td>${assignment.status}</td>
+            <td>${statusHTML}</td>
             <td>${assignment.program.deadline ? assignment.program.deadline : 'N/A'}</td>
             <td>${assignment.application_date ? assignment.application_date : 'N/A'}</td>
           `;
           tbody.appendChild(tr);
         });
-        // Reattach modal click listeners
+        // Reattach modal click listeners for newly added program links.
         document.querySelectorAll('.clickable-program').forEach(function(element) {
           element.addEventListener('click', function(e) {
             e.preventDefault();

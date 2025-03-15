@@ -35,7 +35,18 @@
         {% endfor %}
        
       </td>
-      <td>{{ application.status }}</td>
+      <td>
+        {% if application.status|lower == 'complete' %}
+          <span class="badge badge-success">Complete</span>
+        {% elif application.status|lower == 'rejected' %}
+          <span class="badge badge-danger">Rejected</span>
+        {% elif application.status|lower == 'pending' %}
+          <span class="badge badge-warning">Pending</span>
+        {% else %}
+          {{ application.status }}
+        {% endif %}
+      </td>
+      
       <td>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editStatusModal{{ application.id }}">Edit Status</button>
         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#assignAdvisorModal{{ application.id }}">Assign Advisor</button>
