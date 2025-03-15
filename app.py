@@ -271,6 +271,14 @@ def student_dashboard(student_id):
         return redirect(url_for('login_student', program_id=0))
     student = Student.query.get_or_404(student_id)
     applications = StudentProgram.query.filter_by(student_id=student_id).all()
+    for app in applications:
+        assignment = AdvisorAssignment.query.filter_by(
+            student_id=student_id, program_id=app.program_id
+        ).first()
+        if assignment:
+            app.assigned_advisor = assignment.advisor
+        else:
+            app.assigned_advisor = None
     return render_template('student_dashboard.html', student=student, applications=applications)
 
 
