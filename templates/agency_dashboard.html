@@ -43,7 +43,14 @@
     <tbody>
       {% for program in programs %}
       <tr>
-        <td>{{ program.name }}</td>
+        <td>
+          <a
+            href="#"
+            data-toggle="modal"
+            data-target="#programDetailModal{{ program.id }}"
+          >
+            {{ program.name }}
+          </a>
         <td>{{ program.university }}</td>
         <td>{{ program.field }}</td>
         <td>{{ program.country }}</td>
@@ -186,6 +193,62 @@
           </div>
         </div>
       </div>
+      <!-- Program Detail Modal -->
+      <div
+      class="modal fade"
+      id="programDetailModal{{ program.id }}"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="programDetailModalLabel{{ program.id }}"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="programDetailModalLabel{{ program.id }}">
+              Program Details
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Name:</strong> {{ program.name }}</p>
+            <p><strong>University:</strong> {{ program.university }}</p>
+            <p><strong>Country:</strong> {{ program.country }}</p>
+            <p><strong>Field:</strong> {{ program.field }}</p>
+            <p>
+              <strong>Agency:</strong> {{ program.agency.name if
+              program.agency else 'N/A' }}
+            </p>
+            <p>
+              <strong>Deadline:</strong>
+              {% if program.deadline %} {{
+              program.deadline.strftime('%Y-%m-%d') }} {% else %} N/A {%
+              endif %}
+            </p>
+            <p>
+              <strong>Description:</strong> {{ program.description or 'No
+              description available' }}
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
       {% else %}
       <tr>
         <td colspan="8">No programs found.</td>

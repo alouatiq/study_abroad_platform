@@ -29,7 +29,15 @@
   <tbody>
     {% for app in applications %}
     <tr>
-      <td>{{ app.program.name }}</td>
+      <td>
+        <a
+          href="#"
+          data-toggle="modal"
+          data-target="#programDetailModal{{ app.id }}"
+        >
+          {{ app.program.name }}
+        </a>
+      </td>
       <td>{{ app.program.university }}</td>
       <td>{{ app.program.field }}</td>
       <td>{{ app.program.country }}</td>
@@ -56,10 +64,68 @@
         </form>
       </td>
     </tr>
+    
+    <!-- Program Detail Modal -->
+    <div
+    class="modal fade"
+    id="programDetailModal{{ app.id }}"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="programDetailModalLabel{{ app.id }}"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="programDetailModalLabel{{ app.id }}">
+            Program Details
+          </h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Name:</strong> {{ app.program.name }}</p>
+          <p><strong>University:</strong> {{ app.program.university }}</p>
+          <p><strong>Country:</strong> {{ app.program.country }}</p>
+          <p><strong>Field:</strong> {{ app.program.field }}</p>
+          <p>
+            <strong>Agency:</strong> {{ app.program.agency.name if
+            app.program.agency else 'N/A' }}
+          </p>
+          <p>
+            <strong>Deadline:</strong>
+            {% if app.program.deadline %} {{
+            app.program.deadline.strftime('%Y-%m-%d') }} {% else %} N/A {%
+            endif %}
+          </p>
+          <p>
+            <strong>Description:</strong> {{ app.program.description or 'No
+            description available' }}
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
     {% else %}
     <tr>
       <td colspan="9">No applications found.</td>
     </tr>
+        
     {% endfor %}
   </tbody>
 </table>
