@@ -9,6 +9,7 @@ header, .navbar {
   color: rgb(255, 255, 255);
   padding: 1rem;
 }
+
 .navbar a.nav-link,
 .navbar .navbar-brand {
   color: rgb(255, 255, 255) !important;
