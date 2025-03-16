@@ -25,14 +25,14 @@
       <th>Assistance Status</th>
       <th>Actions</th>
     </tr>
-  </thead>
+  </thead>  
   <tbody>
     {% for advisor_proposal in advisors_list: %}
     <tr>
       <td>{{advisor_proposal['name'] }}</td>
       <td>{{advisor_proposal['country of residence']}}</td>
-      <td>{{advisor_proposal['program name'] }}</td>
       <td>{{advisor_proposal['university'] }}</td>
+      <td>{{advisor_proposal['program name'] }}</td>
       <td>{{advisor_proposal['assistance status']}}</td>
       <td>
         <button
