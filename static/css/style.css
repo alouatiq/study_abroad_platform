@@ -1,28 +1,37 @@
 body {
-    background-color: #f8f9fa;
-    color: #333;
-  }
-  
-  .navbar {
-    margin-bottom: 20px;
-  }
-  
-  
-  /* Ensure full height for html and body */
+  background-color: #fafafa;
+  color: #333;
+}
+
+/* Header & Navbar */
+header, .navbar {
+  background-color: #008080 !important;
+  color: rgb(255, 255, 255);
+  padding: 1rem;
+}
+.navbar a.nav-link,
+.navbar .navbar-brand {
+  color: rgb(255, 255, 255) !important;
+}
+.navbar a.nav-link:hover {
+  color: white !important;
+}
+
+/* Ensure full height for html and body */
 html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+height: 100%;
+margin: 0;
+padding: 0;
 }
 
 /* Wrapper styles for sticky footer */
 .wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+display: flex;
+flex-direction: column;
+min-height: 100vh;
 }
 
 /* Main content grows as needed */
 .content {
-  flex: 1;
+flex: 1;
 }
