@@ -2,9 +2,9 @@
 {% block content %}
 <div class="home-bg" >
   <div class="jumbotron text-center" style="background: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(&quot;{{ url_for('static', filename='images/home.jpg') }}&quot;) no-repeat center center; background-size: cover;">
-    <h1 class="display-4">Study Abroad Platform</h1>
+    <h1 class="display-3">Study Abroad Platform</h1>
     <p class="lead">
-      Helping students find the right academic path with expert guidance.
+      Helping students find the right academic path with expert guidance
     </p>
     <a href="{{ url_for('programs') }}" class="btn btn-primary">Explore Programs</a>
   </div>
@@ -12,19 +12,19 @@
   <div class="row mt-5">
     <!-- Section for Students -->
     <div class="col-md-4">
-      <div class="card">
+      <div class="card" style="background-color: rgb(248, 246, 244);">
         <div class="card-body text-center">
           <h5 class="card-title">For Students</h5>
           <p class="card-text">
             Explore international programs, apply easily, and track your application progress.
           </p>
-          <a href="{{ url_for('register_student', program_id=0) }}" class="btn btn-primary">Sign Up as Student</a>
+          <a href="{{ url_for('register_student', program_id=0) }}" class="btn btn-success">Sign Up as Student</a>
         </div>
       </div>
     </div>
     <!-- Section for Agencies -->
     <div class="col-md-4">
-      <div class="card">
+      <div class="card" style="background-color: rgb(248, 246, 244);">
         <div class="card-body text-center">
           <h5 class="card-title">For Agencies</h5>
           <p class="card-text">
@@ -36,13 +36,13 @@
     </div>
     <!-- Section for Advisors -->
     <div class="col-md-4">
-      <div class="card">
+      <div class="card" style="background-color: rgb(248, 246, 244);">
         <div class="card-body text-center">
           <h5 class="card-title">For Advisors</h5>
           <p class="card-text">
             Assist students with personalized guidance and support their journey to study abroad.
           </p>
-          <a href="{{ url_for('register_advisor', program_id=0) }}" class="btn btn-info">Sign Up as Advisor</a>
+          <a href="{{ url_for('register_advisor', program_id=0) }}" class="btn btn-success">Sign Up as Advisor</a>
         </div>
       </div>
     </div>

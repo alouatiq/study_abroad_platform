@@ -1,5 +1,6 @@
 {% extends "base.html" %} {% block content %}
-<h2>Advisor Registration</h2>
+<div class="container" style="width: 50%">
+  <h2>Advisor Registration</h2>
 <div class="mb-3">
   Already having an account
   <a href="{{url_for('login_advisor', program_id=program_id) }}">Login</a>
@@ -11,28 +12,30 @@
   {{ form.hidden_tag() }}
   <div class="form-group">
     {{ form.full_name.label(class="form-label") }} {{
-    form.full_name(class="form-control") }}
+    form.full_name(class="form-control", placeholder="Enter full name") }}
   </div>
   <div class="form-group">
     {{ form.email.label(class="form-label") }} {{
-    form.email(class="form-control") }}
+    form.email(class="form-control", placeholder="Enter email") }}
   </div>
   <div class="form-group">
     {{ form.password.label(class="form-label") }} {{
-    form.password(class="form-control") }}
+    form.password(class="form-control", placeholder="Password") }}
   </div>
   <div class="form-group">
     {{ form.confirm_password.label(class="form-label") }} {{
-    form.confirm_password(class="form-control") }}
+    form.confirm_password(class="form-control", placeholder="Password") }}
   </div>
   <div class="form-group">
     {{ form.country_of_residence.label(class="form-label") }} {{
-    form.country_of_residence(class="form-control") }}
+    form.country_of_residence(class="form-control", placeholder="Enter country of residence") }}
   </div>
   <div class="form-group">
     {{ form.phone_number.label(class="form-label") }} {{
-    form.phone_number(class="form-control") }}
+    form.phone_number(class="form-control", placeholder="Enter phone number") }}
   </div>
   <button type="submit" class="btn btn-primary mt-3">Register</button>
 </form>
+</div>
+
 {% endblock %}

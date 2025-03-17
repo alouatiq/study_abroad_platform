@@ -1,5 +1,6 @@
 {% extends "base.html" %} {% block content %}
-<h2>Student Registration</h2>
+<div class="container" style="width: 50%">
+  <h2>Student Registration</h2>
 <div class="mb-3">
   Already having an account
   <a href="{{url_for('login_student', program_id=program_id) }}">Login</a>
@@ -10,28 +11,29 @@
 >
   {{ form.hidden_tag() }}
   <div class="mb-3">
-    {{ form.email.label }} {{ form.email(class="form-control") }}
+    {{ form.email.label }} {{ form.email(class="form-control", placeholder="Enter email") }}
   </div>
   <div class="mb-3">
-    {{ form.full_name.label }} {{ form.full_name(class="form-control") }}
+    {{ form.full_name.label }} {{ form.full_name(class="form-control", placeholder="Enter Name") }}
   </div>
   <div class="mb-3">
-    {{ form.password.label }} {{ form.password(class="form-control") }}
+    {{ form.password.label }} {{ form.password(class="form-control", placeholder="Password") }}
   </div>
   <div class="mb-3">
     {{ form.confirm_password.label }} {{
-    form.confirm_password(class="form-control") }}
+    form.confirm_password(class="form-control", placeholder="Password")}}
   </div>
   <div class="mb-3">
-    {{ form.phone_number.label }} {{ form.phone_number(class="form-control") }}
+    {{ form.phone_number.label }} {{ form.phone_number(class="form-control", placeholder="Enter phone number") }}
   </div>
   <div class="mb-3">
-    {{ form.nationality.label }} {{ form.nationality(class="form-control") }}
+    {{ form.nationality.label }} {{ form.nationality(class="form-control", placeholder="Nationality") }}
   </div>
   <div class="mb-3">
     {{ form.country_of_residence.label }} {{
-    form.country_of_residence(class="form-control") }}
+    form.country_of_residence(class="form-control", placeholder="Country of residence") }}
   </div>
   <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
 </form>
+</div>
 {% endblock %}
