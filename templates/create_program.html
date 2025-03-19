@@ -1,41 +1,42 @@
 {% extends "base.html" %} {% block content %}
-<h2>Create Program</h2>
+<div class="container" style="width: 70%;">
+  <h2>Create New Program</h2>
 <form method="POST">
-  <div class="mb-3">
+  <div class="mb-3 mt-4">
     <label>Program Name</label>
-    <input type="text" name="name" class="form-control" required />
+    <input type="text" name="name" placeholder="Edit Name" class="form-control" required />
   </div>
   <div class="mb-3">
     <label>University</label>
-    <input type="text" name="university" class="form-control" required />
+    <input type="text" name="university" placeholder="Edit University" class="form-control" required />
   </div>
   <div class="mb-3">
     <label>Field</label>
-    <input type="text" name="field" class="form-control" />
+    <input type="text" name="field" placeholder="Field of studies" class="form-control" />
   </div>
   <div class="mb-3">
     <label>Country</label>
-    <input type="text" name="country" class="form-control" />
+    <input type="text" name="country" placeholder="Edit Country" class="form-control" />
   </div>
   <div class="mb-3">
     <label>Fee</label>
-    <input type="text" name="fee" class="form-control" />
+    <input type="text" name="fee" placeholder="Edit Program Fee" class="form-control" />
   </div>
   <div class="mb-3">
     <label>Duration</label>
-    <input type="text" name="duration" class="form-control" />
+    <input type="text" name="duration" placeholder="Program duration" class="form-control" />
   </div>
   <div class="mb-3">
     <label>Language</label>
-    <input type="text" name="languages" class="form-control" />
+    <input type="text" name="languages" placeholder="Language" class="form-control" />
   </div>
   <div class="mb-3">
     <label>Proficiency Level</label>
-    <input type="text" name="proficiency_level" class="form-control" />
+    <input type="text" name="proficiency_level" placeholder="Proficiency Level" class="form-control" />
   </div>
   <div class="mb-3">
     <label>Eligibility Criteria</label>
-    <input type="text" name="eligibility_criteria" class="form-control" />
+    <input type="text" name="eligibility_criteria" placeholder="Eligibility Criteria" class="form-control" />
   </div>
   <div class="mb-3">
     <label>Available Scholarships</label>
@@ -51,8 +52,10 @@
   </div>
   <div class="mb-3">
     <label>Description</label>
-    <textarea name="description" class="form-control"></textarea>
+    <textarea name="description" placeholder="Description of program" class="form-control"></textarea>
   </div>
   <button type="submit" class="btn btn-success">Create Program</button>
 </form>
+</div>
+
 {% endblock %}

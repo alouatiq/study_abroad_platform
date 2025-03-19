@@ -1,7 +1,8 @@
 {% extends "base.html" %} {% block content %}
-<h2>Agency Profile</h2>
+<div class="container" style="width: 70%;">
+  <h2>Agency Profile</h2>
 <form method="POST">
-  <div class="mb-3">
+  <div class="mb-3 mt-4">
     <label>Agency Name</label>
     <input
       type="text"
@@ -29,4 +30,6 @@
   </div>
   <button type="submit" class="btn btn-success">Update Profile</button>
 </form>
+</div>
+
 {% endblock %}
