@@ -1,51 +1,54 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card mb-3">
-  <div class="card-header">
-    <h2 class="card-title">{{ program.name }}</h2>
-  </div>
-  <div class="card-body">
-    <p class="card-text"><strong>University:</strong> {{ program.university }}</p>
-    <p class="card-text"><strong>Field:</strong> {{ program.field }}</p>
-    <p class="card-text"><strong>Country:</strong> {{ program.country }}</p>
-    <p class="card-text"><strong>Fee:</strong> {{ program.fee }}</p>
-    <p class="card-text"><strong>Deadline:</strong> {% if program.deadline %}{{ program.deadline.strftime('%Y-%m-%d') }}{% else %}N/A{% endif %}</p>
-    <p class="card-text"><strong>Description:</strong> {{ program.description }}</p>
-    <p class="card-text"><strong>Agency:</strong> {{ agency.name }}</p>
-    <p class="card-text"><strong>Eligibility Criteria:</strong> {{ program.eligibility_criteria }}</p>
-    <p class="card-text"><strong>Proficiency Level:</strong> {{ program.proficiency_level }}</p>
-    <p class="card-text"><strong>Languages:</strong> {{ program.languages }}</p>
-    <p class="card-text"><strong>Duration:</strong> {{ program.duration }}</p>
-  </div>
-  <div class="card-footer">
-    {% if 'student' in session %}
-      <!-- Student is logged in: show only the Apply button -->
-      <form action="{{ url_for('apply_to_program', student_id=session['student'], program_id=program.id) }}" method="POST" class="d-inline">
-        <button type="submit" class="btn btn-primary">Apply</button>
-      </form>
-    {% elif 'advisor' in session %}
-      <!-- Advisor is logged in: show only the Offer Assistance button -->
-      <form action="{{ url_for('offer_assistance', advisor_id=session['advisor'], program_id=program.id) }}" method="POST" class="d-inline">
-        <button type="submit" class="btn btn-info">Offer Assistance</button>
-      </form>
-    {% else %}
-      <!-- No one is logged in: show both buttons with descriptive text -->
-      <div class="d-inline">
-        <form action="{{ url_for('register_student', program_id=program.id) }}" method="get" class="d-inline">
-          <input type="hidden" name="hidden_val" value="{{ program.id }}">
-          <span class="ml-2 align-middle">If you are a Student: </span>
+<div class="container" style="width: 70%;">
+  <div class="card mb-3">
+    <div class="card-header text-center">
+      <h2 class="card-title">{{ program.name }}</h2>
+    </div>
+    <div class="card-body ml-3">
+      <p class="card-text"><strong>University:</strong> {{ program.university }}</p>
+      <p class="card-text"><strong>Field:</strong> {{ program.field }}</p>
+      <p class="card-text"><strong>Country:</strong> {{ program.country }}</p>
+      <p class="card-text"><strong>Fee:</strong> {{ program.fee }}</p>
+      <p class="card-text"><strong>Deadline:</strong> {% if program.deadline %}{{ program.deadline.strftime('%Y-%m-%d') }}{% else %}N/A{% endif %}</p>
+      <p class="card-text"><strong>Description:</strong> {{ program.description }}</p>
+      <p class="card-text"><strong>Agency:</strong> {{ agency.name }}</p>
+      <p class="card-text"><strong>Eligibility Criteria:</strong> {{ program.eligibility_criteria }}</p>
+      <p class="card-text"><strong>Proficiency Level:</strong> {{ program.proficiency_level }}</p>
+      <p class="card-text"><strong>Languages:</strong> {{ program.languages }}</p>
+      <p class="card-text"><strong>Duration:</strong> {{ program.duration }}</p>
+    </div>
+    <div class="card-footer">
+      {% if 'student' in session %}
+        <!-- Student is logged in: show only the Apply button -->
+        <form action="{{ url_for('apply_to_program', student_id=session['student'], program_id=program.id) }}" method="POST" class="d-inline">
           <button type="submit" class="btn btn-primary">Apply</button>
         </form>
-        
-      </div>
-      <div class="d-inline ml-4">
-        <form action="{{ url_for('register_advisor', program_id=program.id) }}" method="get" class="d-inline">
-          <input type="hidden" name="hidden_val" value="{{ program.id }}">
-          <span class="ml-2 align-middle"> Offer your Assisstance as Advisor:</span>
+      {% elif 'advisor' in session %}
+        <!-- Advisor is logged in: show only the Offer Assistance button -->
+        <form action="{{ url_for('offer_assistance', advisor_id=session['advisor'], program_id=program.id) }}" method="POST" class="d-inline">
           <button type="submit" class="btn btn-info">Offer Assistance</button>
         </form>
-      </div>
-    {% endif %}
+      {% else %}
+        <!-- No one is logged in: show both buttons with descriptive text -->
+        <div class="d-inline">
+          <form action="{{ url_for('register_student', program_id=program.id) }}" method="get" class="d-inline">
+            <input type="hidden" name="hidden_val" value="{{ program.id }}">
+            <span class="ml-2 align-middle">If you are a Student: </span>
+            <button type="submit" class="btn btn-primary">Apply</button>
+          </form>
+          
+        </div>
+        <div class="d-inline ml-4">
+          <form action="{{ url_for('register_advisor', program_id=program.id) }}" method="get" class="d-inline">
+            <input type="hidden" name="hidden_val" value="{{ program.id }}">
+            <span class="ml-2 align-middle"> Offer your Assisstance as Advisor:</span>
+            <button type="submit" class="btn btn-info">Offer Assistance</button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
   </div>
 </div>
+
 {% endblock %}

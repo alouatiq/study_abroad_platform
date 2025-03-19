@@ -11,7 +11,7 @@ function fetchPrograms() {
   const field = fieldInput ? fieldInput.value : "";
   const university = universityInput ? universityInput.value : "";
 
-  // Build the API URL with query parameters (properly encoded)
+  // Build the API URL with query parameters 
   const url = `/api/programs?fee=${encodeURIComponent(fee)}&country=${encodeURIComponent(country)}&field=${encodeURIComponent(field)}&university=${encodeURIComponent(university)}`;
 
   fetch(url)
@@ -26,8 +26,10 @@ function fetchPrograms() {
           card.className = "col-md-4 mb-3";
           card.innerHTML = `
             <div class="card h-100">
-              <div class="card-body">
-                <h5>${program.name}</h5>
+            <div class="card-header text-center" style="background-color:rgba(247, 248, 248, 0.95)" >
+              <h5>${program.name}</h5>
+              </div> 
+              <div class="card-body">  
                 <p><strong>University:</strong> ${program.university}</p>
                 <p><strong>Field:</strong> ${program.field}</p>
                 <p><strong>Country:</strong> ${program.country}</p>
