@@ -49,7 +49,7 @@
               {% endif %}
             {% elif 'agency' in session %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('agency_dashboard', agency_id=session['agency']) }}">Dashboard</a>
+              <a class="nav-link" href="{{ url_for('agency_dashboard', agency_id=session['agency']) }}">Manage programs</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('agency_profile', agency_id=session['agency']) }}">Profile</a>
