@@ -1,7 +1,8 @@
 {% extends "base.html" %} {% block content %}
-<h2>Student Documents</h2>
+<div class="container" style="width: 70%;">
+  <h2>Student Documents</h2>
 <form method="POST" enctype="multipart/form-data">
-  <div class="mb-3">
+  <div class="mb-3 mt-4">
     <label for="picture">Upload ID Card</label>
     <input type="file" name="picture" id="picture" class="form-control" />
   </div>
@@ -14,7 +15,7 @@
       class="form-control"
     />
   </div>
-  <div class="mb-3">
+  <div class="mb-4">
     <label for="certificate">Upload Resume</label>
     <input
       type="file"
@@ -26,7 +27,7 @@
   <button type="submit" class="btn btn-primary">Upload Documents</button>
 </form>
 
-<h3>Uploaded Documents</h3>
+<h3 style="margin-top: 40px">Uploaded Documents</h3>
 <ul>
   {% for document in documents %}
   <li>
@@ -45,4 +46,7 @@
   </li>
   {% endfor %}
 </ul>
+</div>
+
+
 {% endblock %}
