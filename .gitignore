@@ -1,0 +1,30 @@
+# Flask instance and session folders
+instance/
+flask_session/
+session/
+
+# Databases and logs
+*.db
+*.sqlite3
+*.log
+
+# Env and virtualenv
+.env
+.venv/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Pytest and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editors
+.vscode/
+.DS_Store
