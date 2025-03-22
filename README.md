@@ -20,8 +20,6 @@ The Study Abroad Platform is a full-stack web application designed to assist stu
 - **Frontend:** HTML, CSS, JavaScript, Bootstrap
 - **Backend:** Flask (Python) with SQLAlchemy ORM
 - **Database:** MySQL
-- **Migrations:** Flask-Migrate (Alembic)
-- **Session Management:** Flask-Session (filesystem)
 
 ## Installation Guide
 
