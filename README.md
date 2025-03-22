@@ -26,7 +26,7 @@ The Study Abroad Platform is a full-stack web application designed to assist stu
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/study-abroad-platform.git
+git clone https://github.com/alouatiq/study_abroad_platform.git
 cd study-abroad-platform
 ```
 
