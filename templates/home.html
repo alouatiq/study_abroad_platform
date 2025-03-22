@@ -58,13 +58,8 @@
       <div class="col-md-6">
         <h2>Student Dashboard</h2>
         <p>Explore international programs, apply easily, and track your application progress.</p>
-        <p>
-          Begin your journey here: 
-        <a href="{{ url_for('register_student', program_id=0) }}" class="btn btn-success">Sign Up as Student</a>
-        </p>
-        <p> Already signed in?
-        <a href="/login/student/0" class="btn btn-primary">Login as student</a>
-        </p>
+        <a href="{{ url_for('register_student', program_id=0) }}" class="btn btn-primary">Sign Up as Student</a>
+        <a href="/login/student/0" class="btn btn-outline-primary">Login as student</a>
       </div>
       <!-- Image on Right -->
       <div class="col-md-6">
@@ -86,13 +81,8 @@
       <div class="col-md-6">
         <h2>Agency Dashboard</h2>
         <p>Manage academic programs, review student applications, and assign advisors seamlessly.</p>
-        <p>
-          Begin your journey here: 
-        <a href="{{ url_for('register_agency') }}" class="btn btn-success">Sign Up as Agency</a>
-        </p>
-        <p> Already signed in?
-        <a href="/login/agency" class="btn btn-primary">Login as Agency</a>
-        </p>
+        <a href="{{ url_for('register_agency') }}" class="btn btn-primary">Sign Up as Agency</a>
+        <a href="/login/agency" class="btn btn-outline-primary">Login as Agency</a>
       </div>
     </div>
   </div>
@@ -106,13 +96,8 @@
       <div class="col-md-6">
         <h2>Advisor Dashboard</h2>
         <p>Assist students with personalized guidance and support their journey to study abroad.</p>
-        <p>
-          Begin your journey here: 
-          <a href="{{ url_for('register_advisor', program_id=0) }}" class="btn btn-success">Sign Up as Advisor</a>
-        </p> 
-        <p> Already signed in? 
-         <a href="/login/advisor/0" class="btn btn-primary">Login as Advisor</a>
-        </p>
+          <a href="{{ url_for('register_advisor', program_id=0) }}" class="btn btn-primary">Sign Up as Advisor</a>
+         <a href="/login/advisor/0" class="btn btn-outline-primary">Login as Advisor</a>
       </div>
       <!-- Image on Right -->
       <div class="col-md-6">
@@ -127,44 +112,59 @@
   <div class="container">
     <h2 class="text-center mb-3">About This Project</h2>
     <p class="text-center">
-      This project was born out of a personal passion for each one of us creating meaningful solutions that help others achieve their dreams. It all started when we witnessed firsthand the challenges students face in exploring academic opportunities abroad. Over time, we dedicated to building a platform that empowers students, agencies, and advisors alike.<br> This is a Portfolio Project for ALX—check it out <a href="https://www.alxafrica.com/" target="_blank">here</a>.
+      This project was born out of a personal passion for each one of us creating meaningful solutions that help others achieve their dreams. It all started when we witnessed firsthand the challenges students face in exploring academic opportunities abroad. Over time, we dedicated ourselves to building a platform that empowers students, agencies, and advisors alike.<br> This is a Portfolio Project for <a href="https://www.alxafrica.com/" target="_blank">ALX</a>.
     </p>
     <p class="text-center">
       View the full project on <a href="https://github.com/alouatiq/study_abroad_platform" target="_blank">GitHub</a>.
     </p>
-    
+
     <div class="container">
       <h3 class="mt-5 mb-3 text-center">Our Team</h3>
       <div class="row text-center">
         <div class="col-md-4 team-member">
           <p><strong>Hajar EL MANNANI</strong></p>
           <p>
-            <a href="https://www.linkedin.com/in/hajarelmannani" target="_blank">LinkedIn</a> |
-            <a href="https://github.com/HajarElMannani" target="_blank">GitHub</a> |
-            <a href="https://x.com/hajarelmannani?t=2Q4b8gSLPRuclUCT8ESq4w&s=08" target="_blank">X</a>
+            <a href="https://www.linkedin.com/in/hajarelmannani" target="_blank" class="mx-3">
+              <i class="fa-brands fa-linkedin fa-2x"></i>
+            </a>
+            <a href="https://github.com/HajarElMannani" target="_blank" class="mx-3">
+              <i class="fa-brands fa-github fa-2x" style="color:#000;"></i>
+            </a>
+            <a href="https://x.com/hajarelmannani" target="_blank" class="mx-3">
+              <i class="fa-brands fa-x fa-2x" style="color: #000;"></i>
+            </a>
           </p>
         </div>
         <div class="col-md-4 team-member">
           <p><strong>Anas AATEF</strong></p>
           <p>
-            <a href="https://www.linkedin.com/in/anas-aatef-a41627153" target="_blank">LinkedIn</a> |
-            <a href="https://github.com/Anas2018EMI" target="_blank">GitHub</a> |
-            <a href="https://x.com/anas_aatef" target="_blank">X</a>
+            <a href="https://www.linkedin.com/in/anas-aatef-a41627153" target="_blank" class="mx-3">
+              <i class="fa-brands fa-linkedin fa-2x"></i>
+            </a>
+            <a href="https://github.com/Anas2018EMI" target="_blank" class="mx-3">
+              <i class="fa-brands fa-github fa-2x" style="color:#000;"></i>
+            </a>
+            <a href="https://x.com/anas_aatef" target="_blank" class="mx-3">
+              <i class="fa-brands fa-x fa-2x" style="color: #000;"></i>
+            </a>
           </p>
         </div>
         <div class="col-md-4 team-member">
           <p><strong>Hassan AL OUATIQ</strong></p>
           <p>
-            <a href="https://www.linkedin.com/in/alouatiq" target="_blank">LinkedIn</a> |
-            <a href="https://github.com/alouatiq" target="_blank">GitHub</a> |
-            <a href="x.com/alouatiqcom" target="_blank">X</a>
+            <a href="https://www.linkedin.com/in/alouatiq" target="_blank" class="mx-3">
+              <i class="fa-brands fa-linkedin fa-2x"></i>
+            </a>
+            <a href="https://github.com/alouatiq" target="_blank" class="mx-3">
+              <i class="fa-brands fa-github fa-2x" style="color:#000;"></i>
+            </a>
+            <a href="https://x.com/alouatiqcom" target="_blank" class="mx-3">
+              <i class="fa-brands fa-x fa-2x" style="color: #000;"></i>
+            </a>
           </p>
         </div>
       </div>
     </div>
-    
-
-    
   </div>
 </section>
 {% endblock %}

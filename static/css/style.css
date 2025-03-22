@@ -68,3 +68,11 @@ flex: 1;
   height: 350px;
   scroll-margin-top: 180px;
 }
+
+.carousel-indicators li {
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black for each indicator */
+}
+
+.carousel-indicators li.active {
+  background-color: #000; /* solid black for the active indicator */
+}
