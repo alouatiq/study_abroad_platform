@@ -1,51 +1,170 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="home-bg" >
-  <div class="jumbotron text-center" style="background: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(&quot;{{ url_for('static', filename='images/home.jpg') }}&quot;) no-repeat center center; background-size: cover;">
-    <h1 class="display-3">Study Abroad Platform</h1>
-    <p class="lead">
-      Helping students find the right academic path with expert guidance
-    </p>
-    <a href="{{ url_for('programs') }}" class="btn btn-primary">Explore Programs</a>
-  </div>
 
-  <div class="row mt-5">
-    <!-- Section for Students -->
-    <div class="col-md-4">
-      <div class="card" style="background-color: rgb(248, 246, 244);">
-        <div class="card-body text-center">
-          <h5 class="card-title">For Students</h5>
-          <p class="card-text">
-            Explore international programs, apply easily, and track your application progress.
-          </p>
-          <a href="{{ url_for('register_student', program_id=0) }}" class="btn btn-success">Sign Up as Student</a>
-        </div>
+{% block nav_items %}
+  <li class="nav-item"><a class="nav-link" href="#student">Student</a></li>
+  <li class="nav-item"><a class="nav-link" href="#agency">Agency</a></li>
+  <li class="nav-item"><a class="nav-link" href="#advisor">Advisor</a></li>
+  <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+{% endblock %}
+
+
+{% block content %}
+<!-- Carousel Section -->
+<div id="homeCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+  <ol class="carousel-indicators">
+    <li data-target="#homeCarousel" data-slide-to="0" class="active"></li>
+    <li data-target="#homeCarousel" data-slide-to="1"></li>
+    <li data-target="#homeCarousel" data-slide-to="2"></li>
+  </ol>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <div class="jumbotron text-center custom-jumbotron" style="background: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(&quot;{{ url_for('static', filename='images/home.webp') }}&quot;) no-repeat center center; background-size: cover;">
+        <h1 class="display-3">Study Abroad Platform</h1>
+        <p class="lead mt-4">Helping students find the right academic path with expert guidance</p>
+        <a href="{{ url_for('programs') }}" class="btn btn-primary mt-4">Explore Programs</a>
       </div>
     </div>
-    <!-- Section for Agencies -->
-    <div class="col-md-4">
-      <div class="card" style="background-color: rgb(248, 246, 244);">
-        <div class="card-body text-center">
-          <h5 class="card-title">For Agencies</h5>
-          <p class="card-text">
-            Manage academic programs, review student applications, and assign advisors seamlessly.
-          </p>
-          <a href="{{ url_for('register_agency') }}" class="btn btn-success">Sign Up as Agency</a>
-        </div>
+
+    <div class="carousel-item">
+      <div class="jumbotron custom-jumbotron text-center" style="background: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(&quot;{{ url_for('static', filename='images/slide3.webp') }}&quot;) no-repeat center center; background-size: cover;">
+        <h1 class="display-4">Transform Your Education Journey</h1>
+        <p class="lead mt-4 font-weight-bold">Take the leap towards a brighter future. Our platform connects you with <br>expert advisors, curated programs, and tailored guidance<br> ensuring your study abroad experience is as rewarding as it is transformative.</p>
       </div>
     </div>
-    <!-- Section for Advisors -->
-    <div class="col-md-4">
-      <div class="card" style="background-color: rgb(248, 246, 244);">
-        <div class="card-body text-center">
-          <h5 class="card-title">For Advisors</h5>
-          <p class="card-text">
-            Assist students with personalized guidance and support their journey to study abroad.
-          </p>
-          <a href="{{ url_for('register_advisor', program_id=0) }}" class="btn btn-success">Sign Up as Advisor</a>
-        </div>
+
+    <div class="carousel-item">
+      <div class="jumbotron custom-jumbotron text-center" style="background: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(&quot;{{ url_for('static', filename='images/slide2.webp') }}&quot;) no-repeat center center; background-size: cover;">
+        <h1 class="display-4">Discover Your Global Future</h1>
+        <p class="lead mt-4 font-weight-bold">Unlock a world of academic opportunities with Study Abroad Platform.<br>Whether you're dreaming of studying at top universities or exploring innovative international programs,<br> we’re here to guide you every step of the way.</p>
+      </div>
+    </div>
+
+  </div>
+  <a class="carousel-control-prev" href="#homeCarousel" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#homeCarousel" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+
+<!-- Student Section -->
+<section id="student" class="mt-5  custom-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <!-- Text and Buttons -->
+      <div class="col-md-6">
+        <h2>Student Dashboard</h2>
+        <p>Explore international programs, apply easily, and track your application progress.</p>
+        <p>
+          Begin your journey here: 
+        <a href="{{ url_for('register_student', program_id=0) }}" class="btn btn-success">Sign Up as Student</a>
+        </p>
+        <p> Already signed in?
+        <a href="/login/student/0" class="btn btn-primary">Login as student</a>
+        </p>
+      </div>
+      <!-- Image on Right -->
+      <div class="col-md-6">
+        <img src="{{ url_for('static', filename='images/student.webp') }}" alt="Student" class="img-fluid rounded border custom-shadow">
       </div>
     </div>
   </div>
-</div>
+</section>
+
+<!-- Agency Section -->
+<section id="agency" class="mt-5  custom-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <!-- Image on Left -->
+      <div class="col-md-6">
+        <img src="{{ url_for('static', filename='images/agency.webp') }}" alt="Agency" class="img-fluid rounded border custom-shadow">
+      </div>
+      <!-- Text and Buttons -->
+      <div class="col-md-6">
+        <h2>Agency Dashboard</h2>
+        <p>Manage academic programs, review student applications, and assign advisors seamlessly.</p>
+        <p>
+          Begin your journey here: 
+        <a href="{{ url_for('register_agency') }}" class="btn btn-success">Sign Up as Agency</a>
+        </p>
+        <p> Already signed in?
+        <a href="/login/agency" class="btn btn-primary">Login as Agency</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Advisor Section -->
+<section id="advisor" class="mt-5  custom-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <!-- Text and Buttons -->
+      <div class="col-md-6">
+        <h2>Advisor Dashboard</h2>
+        <p>Assist students with personalized guidance and support their journey to study abroad.</p>
+        <p>
+          Begin your journey here: 
+          <a href="{{ url_for('register_advisor', program_id=0) }}" class="btn btn-success">Sign Up as Advisor</a>
+        </p> 
+        <p> Already signed in? 
+         <a href="/login/advisor/0" class="btn btn-primary">Login as Advisor</a>
+        </p>
+      </div>
+      <!-- Image on Right -->
+      <div class="col-md-6">
+        <img src="{{ url_for('static', filename='images/advisor.webp') }}" alt="Advisor" class="img-fluid rounded border custom-shadow">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="mt-5  pt-5 pb-4 custom-section" style="background-color: rgb(238, 236, 234);">
+  <div class="container">
+    <h2 class="text-center mb-3">About This Project</h2>
+    <p class="text-center">
+      This project was born out of a personal passion for each one of us creating meaningful solutions that help others achieve their dreams. It all started when we witnessed firsthand the challenges students face in exploring academic opportunities abroad. Over time, we dedicated to building a platform that empowers students, agencies, and advisors alike.<br> This is a Portfolio Project for ALX—check it out <a href="https://www.alxafrica.com/" target="_blank">here</a>.
+    </p>
+    <p class="text-center">
+      View the full project on <a href="https://github.com/alouatiq/study_abroad_platform" target="_blank">GitHub</a>.
+    </p>
+    
+    <div class="container">
+      <h3 class="mt-5 mb-3 text-center">Our Team</h3>
+      <div class="row text-center">
+        <div class="col-md-4 team-member">
+          <p><strong>Hajar EL MANNANI</strong></p>
+          <p>
+            <a href="https://www.linkedin.com/in/hajarelmannani" target="_blank">LinkedIn</a> |
+            <a href="https://github.com/HajarElMannani" target="_blank">GitHub</a> |
+            <a href="https://x.com/hajarelmannani?t=2Q4b8gSLPRuclUCT8ESq4w&s=08" target="_blank">X</a>
+          </p>
+        </div>
+        <div class="col-md-4 team-member">
+          <p><strong>Anas AATEF</strong></p>
+          <p>
+            <a href="https://www.linkedin.com/in/anas-aatef-a41627153" target="_blank">LinkedIn</a> |
+            <a href="https://github.com/Anas2018EMI" target="_blank">GitHub</a> |
+            <a href="https://twitter.com/member2" target="_blank">X</a>
+          </p>
+        </div>
+        <div class="col-md-4 team-member">
+          <p><strong>Hassan AL OUATIQ</strong></p>
+          <p>
+            <a href="https://www.linkedin.com/in/alouatiq" target="_blank">LinkedIn</a> |
+            <a href="https://github.com/alouatiq" target="_blank">GitHub</a> |
+            <a href="x.com/alouatiqcom" target="_blank">X</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    
+
+    
+  </div>
+</section>
 {% endblock %}

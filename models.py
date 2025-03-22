@@ -34,7 +34,7 @@ class Program(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
     agency_id = db.Column(db.String(36), db.ForeignKey(
         'agencies.id'), nullable=False)
-    name = db.Column(db.String(255), unique=True, nullable=False)
+    name = db.Column(db.String(255), nullable=False)
     university = db.Column(db.String(255))
     field = db.Column(db.String(50), default="Unknown")
     country = db.Column(db.String(50))

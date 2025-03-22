@@ -12,72 +12,77 @@
   </head>
   <body>
     <div class="wrapper">
-      <nav class="navbar navbar-expand-md navbar-light bg-light">
+      <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
         <a class="navbar-brand" href="{{ url_for('home') }}">Study Abroad</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#xbar">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div id="xbar" class="collapse navbar-collapse">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('home') }}">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('programs') }}">Programs</a>
-            </li>
-            {% if 'student' in session %}
-              {% if request.path.endswith('/profile') %}
+            {% block nav_items %}
+              <!-- Default Navigation Items -->
+               <!--
               <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('student_dashboard', student_id=session['student']) }}">Dashboard</a>
+                <a class="nav-link" href="{{ url_for('home') }}">Home</a>
               </li>
+              -->
               <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('student_documents', student_id=session['student']) }}">Documents</a>
+                <a class="nav-link" href="{{ url_for('programs') }}">Programs</a>
               </li>
-              {% else %}
-                {% if request.path.startswith('/students/') and request.path.endswith('/dashboard') %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('student_documents', student_id=session['student']) }}">Documents</a>
-                </li>
+              {% if 'student' in session %}
+                {% if request.path.endswith('/profile') %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('student_dashboard', student_id=session['student']) }}">Dashboard</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('student_documents', student_id=session['student']) }}">Documents</a>
+                  </li>
                 {% else %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('student_dashboard', student_id=session['student']) }}">Dashboard</a>
-                </li>
+                  {% if request.path.startswith('/students/') and request.path.endswith('/dashboard') %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ url_for('student_documents', student_id=session['student']) }}">Documents</a>
+                    </li>
+                  {% else %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ url_for('student_dashboard', student_id=session['student']) }}">Dashboard</a>
+                    </li>
+                  {% endif %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('student_profile', student_id=session['student']) }}">Profile</a>
+                  </li>
                 {% endif %}
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('student_profile', student_id=session['student']) }}">Profile</a>
-              </li>
+              {% elif 'agency' in session %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('agency_dashboard', agency_id=session['agency']) }}">Manage programs</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('agency_profile', agency_id=session['agency']) }}">Profile</a>
+                </li>
+              {% elif 'advisor' in session %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('advisor_dashboard', advisor_id=session['advisor']) }}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('advisor_students', advisor_id=session['advisor']) }}">Assigned Students</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('advisor_profile', advisor_id=session['advisor']) }}">Profile</a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('login_student', program_id=0) }}">Student Login</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('login_agency') }}">Agency Login</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('login_advisor', program_id=0) }}">Advisor Login</a>
+                </li>
               {% endif %}
-            {% elif 'agency' in session %}
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('agency_dashboard', agency_id=session['agency']) }}">Manage programs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('agency_profile', agency_id=session['agency']) }}">Profile</a>
-            </li>
-            {% elif 'advisor' in session %}
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('advisor_dashboard', advisor_id=session['advisor']) }}">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('advisor_students', advisor_id=session['advisor']) }}">Assigned Students</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('advisor_profile', advisor_id=session['advisor']) }}">Profile</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('login_student', program_id=0) }}">Student Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('login_agency') }}">Agency Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('login_advisor', program_id=0) }}">Advisor Login</a>
-            </li>
-            {% endif %}
+            {% endblock %}
           </ul>
           {% if 'student' in session or 'agency' in session or 'advisor' in session %}
-          <a class="btn btn-outline-light" href="{{ url_for('logout') }}">Logout</a>
+            <a class="btn btn-outline-light" href="{{ url_for('logout') }}">Logout</a>
           {% endif %}
         </div>
       </nav>

@@ -23,6 +23,7 @@ html, body {
 height: 100%;
 margin: 0;
 padding: 0;
+padding-top: 50px;
 }
 
 /* Wrapper styles for sticky footer */
@@ -35,4 +36,35 @@ min-height: 100vh;
 /* Main content grows as needed */
 .content {
 flex: 1;
+}
+
+.custom-jumbotron {
+  padding: 5rem 2rem;   /* Adjust padding to change content spacing */
+  min-height: 350px;     /* Set a minimum height */
+  margin-bottom: 2rem;   /* adjust spacing below the jumbotron */
+  background-size: cover;
+  background-position: center;
+}
+
+.section-divider {
+  padding-bottom: 40px;
+  margin-bottom: 40px;
+}
+.custom-shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.308);
+}
+
+#student.custom-section {
+  height: 350px;
+  scroll-margin-top: 180px;
+}
+
+#agency.custom-section {
+  height: 350px;
+  scroll-margin-top: 180px;
+}
+
+#advisor.custom-section {
+  height: 350px;
+  scroll-margin-top: 180px;
 }
