@@ -6,9 +6,7 @@ class Config:
 
     # Database URL (Render provides this in ENV)
     SQLALCHEMY_DATABASE_URI = os.getenv(
-        'DATABASE_URL', 
-        'mysql+pymysql://portfolio_dev:portfolio_dev_pwd@localhost/study_abroad_db'
-    )
+    'DATABASE_URL', 'postgresql://renderuser:password@host:port/dbname')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
