@@ -22,6 +22,15 @@ db.init_app(app)
 migrate = Migrate(app, db)
 Session(app)
 
+# ✅ Run migrations always on startup
+with app.app_context():
+    try:
+        from flask_migrate import upgrade
+        upgrade()
+        print("✅ Database upgraded successfully.")
+    except Exception as e:
+        print(f"❌ Migration failed: {e}")
+        
 # Import models after initializing the db
 
 # Helper function to generate a UUID
@@ -972,13 +981,3 @@ def logout():
     session.clear()
     flash("Logged out successfully", "info")
     return redirect(url_for('home'))
-
-
-if __name__ == '__main__':
-    with app.app_context():
-        try:
-            subprocess.run(["flask", "db", "upgrade"], check=True)
-            print("Database upgraded successfully.")
-        except Exception as e:
-            print(f"Migration failed: {e}")
-    app.run(debug=False)
