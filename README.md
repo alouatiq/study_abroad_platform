@@ -2,35 +2,50 @@
 
 ## Overview
 
-The Study Abroad Platform is a full-stack web application designed to assist students in finding the right academic programs abroad. It facilitates easy discovery of programs, agency management, student-advisor interactions, and application tracking. Agencies can manage their programs and advisors, offering end-to-end support for students.
+The **Study Abroad Platform** is a full-stack web application designed to help students discover academic programs abroad, connect with advisors, and apply through agencies. Agencies and advisors can manage programs, guide students, and track applications from end to end.
 
-## Key Features
+---
 
-- User Registration (Students, Agencies, Advisors)
-- Program Catalog with Search & Filter Options
-- Agency Dashboard (Program & Service Management)
-- Student-Advisor Matching System
-- Application Tracking (Student-Advisor-Agency workflows)
-- Multi-role Dashboard (Students, Advisors, Agencies)
-- Secure Login & Role-based Access Control
-- Responsive UI (Bootstrap powered)
+## 🔑 Key Features
 
-## Tech Stack
+- 👩‍🎓 User Registration (Students, Agencies, Advisors)
+- 🔍 Program Catalog with Search & Filters
+- 🧑‍💼 Agency Dashboard: Manage Programs & Services
+- 🤝 Student-Advisor Matching System
+- 📋 Application Workflow Management
+- 🔐 Role-Based Access Control & Secure Login
+- 📱 Responsive Interface (Bootstrap)
+
+---
+
+## ⚙️ Tech Stack
 
 - **Frontend:** HTML, CSS, JavaScript, Bootstrap
-- **Backend:** Flask (Python) with SQLAlchemy ORM
-- **Database:** MySQL
+- **Backend:** Flask (Python) + Flask-WTF + SQLAlchemy + Flask-Migrate
+- **Database:** PostgreSQL (via Render)
+- **Deployment:**
+  - Backend API: [Render](https://study-abroad-platform.onrender.com/)
+  - Landing Page: [Vercel](https://study-abroad-platform.vercel.app/)
 
-## Installation Guide
+---
+
+## 🚀 Deployed Project
+
+- **Project API:** [https://study-abroad-platform.onrender.com/](https://study-abroad-platform.onrender.com/)
+- **Landing Page:** [https://study-abroad-platform.vercel.app/](https://study-abroad-platform.vercel.app/)
+
+---
+
+## 🛠️ Setup Instructions (Local Development)
 
 ### 1. Clone the repository
 
 ```bash
 git clone https://github.com/alouatiq/study_abroad_platform.git
-cd study-abroad-platform
+cd study_abroad_platform
 ```
 
-### 2. Setup virtual environment
+### 2. Create a virtual environment
 
 ```bash
 python -m venv venv
@@ -43,69 +58,54 @@ source venv/bin/activate  # For Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Configure Database
+### 4. Configure Environment Variables
 
-You can either manually create the database or use the automated setup script.
+Create a `.env` file (or export manually) with:
 
-#### Option 1: Manually (MySQL shell)
-
-```bash
-mysql -u root -p
-```
-Inside the MySQL shell:
-
-```sql
-SOURCE database_setup.sql;
+```env
+FLASK_ENV=development
+SECRET_KEY=your-secret-key
+DATABASE_URL=postgresql://username:password@host:port/dbname
 ```
 
-#### Option 2: Automated Setup
+> Replace with your local or remote PostgreSQL credentials.
 
-To automatically create the database without entering the MySQL shell, run:
-
-```bash
-python setup_db.py
-```
-
-> This requires proper permissions and `sqlalchemy-utils` installed.
-
-### 5. Run database migrations
+### 5. Run Migrations
 
 ```bash
 flask db init
-flask db migrate -m "Initial migration."
+flask db migrate -m "Initial migration"
 flask db upgrade
 ```
 
-### 6. Run the application
+### 6. Run the app
 
 ```bash
 flask run
 ```
 
-Visit `http://127.0.0.1:5000/` in your browser.
+Visit [http://127.0.0.1:5000/](http://127.0.0.1:5000/) in your browser.
 
-## Usage Guide
+---
 
-- Students can browse programs, apply, and connect with advisors.
-- Agencies can register programs and assign advisors.
-- Advisors can manage student applications and assist them through the process.
+## 📸 Screenshots
 
-## Screenshots
+![Student Dashboard](https://raw.githubusercontent.com/alouatiq/study_abroad_platform/refs/heads/main/static/images/student.webp)
+![Advisor Dashboard](https://raw.githubusercontent.com/alouatiq/study_abroad_platform/refs/heads/main/static/images/advisor.webp)
+![Agency Dashboard](https://raw.githubusercontent.com/alouatiq/study_abroad_platform/refs/heads/main/static/images/agency.webp)
 
-![Student Dashboard](link-to-image1)
-![Program Listing](link-to-image2)
-![Agency Dashboard](link-to-image3)
+---
 
-## Contribution Guidelines
+## 👥 Contributors
 
-We welcome contributions! To contribute:
+| Username | Name |
+|----------|------|
+| [@alouatiq](https://github.com/alouatiq) | AL OUATIQ Hassan |
+| [@HajarElMannani](https://github.com/HajarElMannani) | Hajar El Mannani |
+| [@Anas2018EMI](https://github.com/Anas2018EMI) | Anas AATEF |
 
-1. Fork this repository.
-2. Create your feature branch: `git checkout -b feature/YourFeature`.
-3. Commit your changes: `git commit -m 'Add Your Feature'`.
-4. Push to the branch: `git push origin feature/YourFeature`.
-5. Open a Pull Request.
+---
 
-## License
+## 📜 License
 
 This project is licensed under the MIT License.
