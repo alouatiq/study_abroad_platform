@@ -976,9 +976,9 @@ def logout():
 
 if __name__ == '__main__':
     with app.app_context():
-        # Run database migrations automatically
         try:
             subprocess.run(["flask", "db", "upgrade"], check=True)
+            print("Database upgraded successfully.")
         except Exception as e:
             print(f"Migration failed: {e}")
     app.run(debug=False)
