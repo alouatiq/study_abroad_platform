@@ -5,6 +5,7 @@ from config import Config
 from datetime import datetime
 import uuid
 import os
+import subprocess
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import StudentRegistrationForm, StudentLoginForm, AgencyRegistrationForm, AgencyLoginForm, AdvisorRegistrationForm, AdvisorLoginForm
@@ -974,7 +975,10 @@ def logout():
 
 
 if __name__ == '__main__':
-    # Only use db.create_all() during local development
-    # with app.app_context():
-    #     db.create_all()
-    app.run()
+    with app.app_context():
+        # Run database migrations automatically
+        try:
+            subprocess.run(["flask", "db", "upgrade"], check=True)
+        except Exception as e:
+            print(f"Migration failed: {e}")
+    app.run(debug=False)
