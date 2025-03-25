@@ -1,10 +1,20 @@
 import os
 
-
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key')
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL', 'mysql://portfolio_dev:portfolio_dev_pwd@localhost/study_abroad_db')
+    # Secret key for session, CSRF protection, etc.
+    SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key')
+
+    # Database URL (Render provides this in ENV)
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        'DATABASE_URL', 
+        'mysql+pymysql://portfolio_dev:portfolio_dev_pwd@localhost/study_abroad_db'
+    )
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Session settings
     SESSION_TYPE = 'filesystem'
-    SESSION_COOKIE_NAME = 'session'  # or any name you prefer
+    SESSION_COOKIE_NAME = 'session'
+
+    # Optional: log all SQL queries (for debugging locally)
+    SQLALCHEMY_ECHO = os.getenv('FLASK_ENV') != 'production'
