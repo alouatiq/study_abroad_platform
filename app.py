@@ -1,18 +1,23 @@
+import uuid
+import os
+import subprocess
+
 from models import Student, Agency, Program, Advisor, StudentProgram, AdvisorAssignment, AdvisorApplication
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_session import Session
 from config import Config
 from datetime import datetime
-import uuid
-import os
-import subprocess
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import StudentRegistrationForm, StudentLoginForm, AgencyRegistrationForm, AgencyLoginForm, AdvisorRegistrationForm, AdvisorLoginForm
 from sqlalchemy import and_
-
 # Import the db from the extensions module
 from extensions import db
+# ----------------------------
+# Flask App Configuration
+# ----------------------------
+
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -35,31 +40,34 @@ with app.app_context():
 
 # Helper function to generate a UUID
 
-
 def generate_uuid():
+    # Utility function to generate UUIDs for primary keys
     return str(uuid.uuid4())
 
 
 def is_logged_in(role, user_id):
+    # Helper function to check if a user of a specific role is logged in
     return session.get(role) == user_id
 
 # -------------------------
-# Routes
+# Basic Page Routes
 # -------------------------
-
 
 @app.route('/')
 def home():
     return render_template('home.html')
 
+# -------------------------
+# API Endpoints - Programs
+# -------------------------
 
 @app.route('/programs')
 def programs():
     return render_template("programs.html")
 
-
 @app.route('/api/programs', methods=['GET'])
 def api_programs():
+    # Retrieves programs with optional filters for fee, country, field, and university
     fee = request.args.get('fee')
     country = request.args.get('country')
     field = request.args.get('field')
@@ -87,9 +95,13 @@ def api_programs():
     } for p in programs_list]
     return jsonify(data)
 
+# -------------------------
+# API Endpoints - Advisors
+# -------------------------
 
 @app.route('/api/advisors')
 def api_advisors():
+    # Returns list of advisors, filtered by program name, country, or university
     program_name = request.args.get('program_name', '')
     country = request.args.get('country', '')
     university = request.args.get('university', '')
@@ -135,6 +147,7 @@ def api_advisors():
 
 @app.route('/api/advisor_students')
 def api_advisor_students():
+    # API to return students assigned to a specific advisor, with optional filters
     advisor_id = request.args.get('advisor_id')
     program_filter = request.args.get('program', '').strip()
     status_filter = request.args.get('status', '').strip()
@@ -207,9 +220,13 @@ def program_detail(program_id):
     agency = Agency.query.filter_by(id=program.agency_id).first()
     return render_template('program_detail.html', program=program, agency=agency)
 
+# -------------------------
+# Student Registration & Login
+# -------------------------
 
 @app.route('/register/student/<program_id>', methods=['GET', 'POST'])
 def register_student(program_id=0):
+    # Handles student registration and optional redirect to apply for a program
     form = StudentRegistrationForm()
     if form.validate_on_submit():
         email = form.email.data
@@ -250,6 +267,7 @@ def register_student(program_id=0):
 
 @app.route('/login/student/<program_id>', methods=['GET', 'POST'])
 def login_student(program_id=0):
+    # Authenticates student and redirects to dashboard or selected program
     form = StudentLoginForm()
     # print(f"0- program_id = {program_id}")
 
@@ -294,6 +312,7 @@ def student_dashboard(student_id):
 
 @app.route('/students/<student_id>/apply/<program_id>', methods=['POST'])
 def apply_to_program(student_id, program_id):
+    # Allows logged-in student to apply to a selected program
     if not is_logged_in('student', student_id):
         flash("You need to be logged in to apply", "warning")
         return redirect(url_for('register_student', program_id=program_id))
@@ -328,9 +347,13 @@ def delete_application(id):
     flash('Application deleted successfully!', 'success')
     return redirect(url_for('student_dashboard', student_id=student_id))
 
+# -------------------------
+# Student Documents Management
+# -------------------------
 
 @app.route('/students/<student_id>/dashboard/documents', methods=['GET', 'POST'])
 def student_documents(student_id):
+    # Upload and display student documents (picture, ID, certificate)
     if not is_logged_in('student', student_id):
         flash("Please login to access your documents", "warning")
         return redirect(url_for('login_student', program_id=0))
@@ -358,6 +381,7 @@ def student_documents(student_id):
 
 @app.route('/students/<student_id>/dashboard/documents/delete/<document>', methods=['POST'])
 def delete_document(student_id, document):
+    # Deletes a specific student document
     if not is_logged_in('student', student_id):
         flash("Please login to delete your documents", "warning")
         return redirect(url_for('login_student', program_id=0))
@@ -373,6 +397,9 @@ def delete_document(student_id, document):
 
     return redirect(url_for('student_documents', student_id=student_id))
 
+# -------------------------
+# Student Profile
+# -------------------------
 
 @app.route('/students/<student_id>/profile', methods=['GET', 'POST'])
 def student_profile(student_id):
@@ -448,8 +475,9 @@ def delete_program(program_id):
     flash("Program deleted successfully", "success")
     return redirect(url_for('agency_dashboard', agency_id=agency_id))
 
-# --- Agency Routes ---
-
+# -------------------------
+# Agency Routes
+# -------------------------
 
 @app.route('/register/agency', methods=['GET', 'POST'])
 def register_agency():
@@ -500,6 +528,7 @@ def login_agency():
 
 @app.route('/agencies/<agency_id>/dashboard')
 def agency_dashboard(agency_id):
+    # Displays agency dashboard with their programs
     if session.get('agency') != agency_id:
         flash("Please login as agency", "warning")
         return redirect(url_for('login_agency'))
@@ -513,6 +542,7 @@ def agency_dashboard(agency_id):
 
 @app.route('/agencies/<agency_id>/dashboard/students')
 def agency_students(agency_id):
+    # Shows list of students and advisors linked to the agency’s programs
     if session.get('agency') != agency_id:
         flash("Please login as agency", "warning")
         return redirect(url_for('login_agency'))
@@ -540,6 +570,7 @@ def agency_students(agency_id):
 
 @app.route('/agencies/<agency_id>/dashboard/students/update_status/<application_id>', methods=['POST'])
 def update_application_status(agency_id, application_id):
+    # Updates a student's application status (accepted, rejected, etc.)
     if session.get('agency') != agency_id:
         flash("Please login as agency", "warning")
         return redirect(url_for('login_agency'))
@@ -554,6 +585,7 @@ def update_application_status(agency_id, application_id):
 
 @app.route('/agencies/<agency_id>/dashboard/students/assign_advisor/<application_id>', methods=['POST'])
 def assign_advisor_to_student(agency_id, application_id):
+    # Assigns or re-assigns an advisor to a student application
     if session.get('agency') != agency_id:
         flash("Please login as agency", "warning")
         return redirect(url_for('login_agency'))
@@ -587,6 +619,7 @@ def assign_advisor_to_student(agency_id, application_id):
 
 @app.route('/agencies/<string:agency_id>/dashboard/advisors', methods=['GET', 'POST'])
 def agency_advisors(agency_id):
+    # View advisor applications to agency programs and approve/reject assistance
     agency = Agency.query.get_or_404(agency_id)
     my_programs = Program.query.filter_by(agency_id=agency_id).all()
 
@@ -662,7 +695,6 @@ def unassign_student(agency_id, advisor_id, student_id):
         flash("Assignment not found", "danger")
 
     return redirect(url_for('agency_advisors', agency_id=agency_id))
-
 
 @app.route('/agencies/<agency_id>/dashboard/advisors/<advisor_id>/assign', methods=['POST'])
 def assign_advisor(agency_id, advisor_id):
@@ -772,11 +804,13 @@ def create_program(agency_id):
 
     return render_template('create_program.html', agency_id=agency_id)
 
-# --- Advisor Routes ---
-
+# -------------------------
+# Advisor Routes
+# -------------------------
 
 @app.route('/register/advisor/<program_id>', methods=['GET', 'POST'])
 def register_advisor(program_id=0):
+    # Handles advisor registration and optional redirection to apply for a program
     form = AdvisorRegistrationForm()
     # Populate the agency choices from the database
     if form.validate_on_submit():
@@ -845,6 +879,7 @@ def login_advisor(program_id=0):
 
 @app.route('/advisors/<string:advisor_id>/dashboard')
 def advisor_dashboard(advisor_id):
+    # Displays advisor dashboard with program assistance applications
     if session.get('advisor') != advisor_id:
         flash("Please login as advisor", "warning")
         return redirect(url_for('login_advisor'))
@@ -860,6 +895,7 @@ def advisor_dashboard(advisor_id):
 
 @app.route('/advisors/<advisor_id>/dashboard/students')
 def advisor_students(advisor_id):
+    # Lists students assigned to this advisor with application status
     if session.get('advisor') != advisor_id:
         flash("Please login as advisor", "warning")
         return redirect(url_for('login_advisor'))
@@ -898,6 +934,7 @@ def advisor_profile(advisor_id):
 
 @app.route('/advisors/<string:advisor_id>/apply/<string:program_id>', methods=['POST'])
 def offer_assistance(advisor_id, program_id):
+    # Advisor offers assistance for a specific program
     if session.get('advisor') != advisor_id:
         flash("Please login as advisor", "warning")
         return redirect(url_for('login_advisor'))
@@ -968,6 +1005,9 @@ def delete_advisor_application(application_id):
 #     # Render a dedicated page or modal to offer assistance.
 #     return render_template('offer_assistance.html', program=program)
 
+# -------------------------
+# Error Handling & Logout
+# -------------------------
 
 @app.route('/error')
 def error():
